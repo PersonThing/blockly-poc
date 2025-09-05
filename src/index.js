@@ -7,15 +7,15 @@
 import * as Blockly from "blockly";
 import { FieldDate } from "@blockly/field-date";
 import "./blocks/custom_blocks";
-import { javascriptGenerator } from "./generators/javascript";
-import { jsonGenerator } from "./generators/json";
+import javascriptGenerator from "./generators/javascript";
+import jsonGenerator from "./generators/json";
 import { save, load } from "./serialization";
 import { toolbox } from "./toolbox";
 import "./index.css";
 
 // Set up UI elements and inject Blockly
-const jsContainer = document.getElementById("generatedJs").firstChild;
-const jsonContainer = document.getElementById("generatedJson").firstChild;
+const jsContainer = document.getElementById("generatedJs");
+const jsonTextarea = document.getElementById("generatedJson");
 const blocklyDiv = document.getElementById("blocklyDiv");
 const ws = Blockly.inject(blocklyDiv, {
   toolbox,
@@ -46,22 +46,18 @@ const context = {
 
   // generate json from blocks
   // this is what our APIs will persist
-  let json = jsonGenerator.workspaceToCode(ws);
-  // hack to trim parens until we figure out how to avoid them in the generator
-  json = json.replace(/[()]/g, "");
-  // replace }{ with },{
-  json = json.replace(/}\s+{/g, "},{");
+  let json = jsonGenerator.fromWorkspace(ws);
 
   // parse and format it
   try {
-    const parsed = JSON.parse('[' + json + ']');
+    const parsed = JSON.parse("[" + json + "]");
     json = JSON.stringify(parsed, null, 2);
   } catch (e) {
     // ignore
-    console.error("Unable to parse JSON", e);
+    console.error("Unable to parse JSON", e, json);
   }
 
-  jsonContainer.innerText = json;
+  jsonTextarea.value = json;
 };
 
 // Load the initial state from storage and run the code.

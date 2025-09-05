@@ -67,7 +67,7 @@ javascriptGenerator.forBlock["offset"] = function (block, generator) {
 
 javascriptGenerator.forBlock["recurrence_frame"] = function (block, generator) {
   // TODO
-  return `// recurrence frame javascript\n`;
+  return [`// recurrence frame javascript\n`, Order.NONE];
 };
 
-export { javascriptGenerator };
+export default javascriptGenerator;

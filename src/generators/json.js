@@ -1,123 +1,133 @@
 import * as Blockly from "blockly";
-import { Order } from "blockly/javascript";
 
-export const jsonGenerator = new Blockly.CodeGenerator("JSON");
+const jsonGenerator = new Blockly.Generator("JSON");
 
-const getNestedCode = (block, generator) => {
-  const nextBlocks = generator.statementToCode(block, "BODY");
-  const lines = nextBlocks.split("\n").filter(Boolean); // Split into lines and filter out empty strings
-  const formattedLines = lines.map((line) => line.trim()); // Trim whitespace from each line
-  return formattedLines;
+jsonGenerator.fromWorkspace = function (workspace) {
+  let rootBlockJsons = [];
+
+  var topBlocks = workspace.getTopBlocks(true);
+  topBlocks.forEach(function (block) {
+    rootBlockJsons.push(jsonGenerator.fromBlock(block));
+  });
+
+  return `[${rootBlockJsons.join(",")}]`;
 };
 
-jsonGenerator.forBlock["set_output"] = function (block, generator) {
-  const value = generator.valueToCode(block, "VALUE", 0) || "null";
-  const code = `{"type":"set_output", "value": ${value}}`;
-  return code; //[code, Order.NONE];
+jsonGenerator.fromBlock = function (block) {
+  if (block) {
+    var func = this[block.type];
+    if (func) {
+      return func.call(this, block);
+    } else {
+      console.log(
+        `Don't know how to generate JSON code for a ${block.type} block`
+      );
+      return "null";
+    }
+  } else {
+    return "null";
+  }
 };
 
-jsonGenerator.forBlock["math_number"] = function (block, generator) {
+jsonGenerator.set_output = function (block) {
+  const value = this.fromBlock(block.getInputTargetBlock("VALUE"));
+  return `{"type":"set_output", "value": ${value}}`;
+};
+
+jsonGenerator.math_number = function (block) {
   const num = Number(block.getFieldValue("NUM"));
-  return [isNaN(num) ? "0" : String(num), Order.ATOMIC];
+  return `{"type": "number", "value": ${isNaN(num) ? 0 : num} }`;
 };
 
-jsonGenerator.forBlock["context_variable"] = function (block, generator) {
+jsonGenerator.logic_compare = function (block) {
+  const operator = block.getFieldValue("OP");
+  const left = this.fromBlock(block.getInputTargetBlock("A"));
+  const right = this.fromBlock(block.getInputTargetBlock("B"));
+  return `{"type":"logic_compare", "operator":"${operator}", "left":${left}, "right":${right}}`;
+};
+
+jsonGenerator.context_variable = function (block) {
   const variable = block.getFieldValue("VARIABLE_NAME");
-  return [`{"type":"context_variable", "value": "${variable}"}`, Order.NONE];
+  return `{"type":"context_variable", "value": "${variable}"}`;
 };
 
-jsonGenerator.forBlock["add"] = function (block, generator) {
+jsonGenerator.add = function (block) {
   const values = [];
-  for (let i = 0; i < block.length; i++) {
-    const inputName = `value_${i}`;
-    const value = generator.valueToCode(block, inputName, 0) || "null";
-    values.push(value);
-  }
-  return [`{"type":"add", "values": [${values.join(',')}]}`, Order.ADDITION];
+  block.getChildren(true).forEach((block) => {
+    values.push(this.fromBlock(block));
+  });
+  return `{"type":"add", "values": [${values.join(",")}]}`;
 };
 
-jsonGenerator.forBlock["subtract"] = function (block, generator) {
+jsonGenerator.subtract = function (block) {
   const values = [];
-  for (let i = 0; i < block.length; i++) {
-    const inputName = `value_${i}`;
-    const value = generator.valueToCode(block, inputName, 0) || "null";
-    values.push(value);
-  }
-  return [`{"type":"subtract", "values": [${values.join(',')}]}`, Order.SUBTRACTION];
+  block.getChildren().forEach((block) => {
+    values.push(this.fromBlock(block));
+  });
+  return `{"type":"subtract", "values": [${values.join(",")}]}`;
 };
 
-jsonGenerator.forBlock["multiply"] = function (block, generator) {
-  const valueA = generator.valueToCode(block, "A", 0) || "null";
-  const valueB = generator.valueToCode(block, "B", 0) || "null";
-  return [
-    `{"type":"multiply", "value":{"A":${valueA}, "B":${valueB}}}`,
-    Order.MULTIPLICATION,
-  ];
+jsonGenerator.multiply = function (block) {
+  const valueA = this.fromBlock(block.getInputTargetBlock("A"));
+  const valueB = this.fromBlock(block.getInputTargetBlock("B"));
+  return `{"type":"multiply", "value":{"A":${valueA}, "B":${valueB}}}`;
 };
 
-jsonGenerator.forBlock["divide"] = function (block, generator) {
-  const valueA = generator.valueToCode(block, "A", 0) || "null";
-  const valueB = generator.valueToCode(block, "B", 0) || "null";
-  return [
-    `{"type":"divide", "value":{"A":${valueA}, "B":${valueB}}}`,
-    Order.DIVISION,
-  ];
+jsonGenerator.divide = function (block) {
+  const valueA = this.fromBlock(block.getInputTargetBlock("A"));
+  const valueB = this.fromBlock(block.getInputTargetBlock("B"));
+  return `{"type":"divide", "value":{"A":${valueA}, "B":${valueB}}}`;
 };
 
-jsonGenerator.forBlock["conditional_number"] = function (block, generator) {
-  const condition = generator.valueToCode(block, "CONDITION", 0) || "null";
-  const trueValue = generator.valueToCode(block, "TRUE_VALUE", 0) || "null";
-  const falseValue = generator.valueToCode(block, "FALSE_VALUE", 0) || "null";
-  return [
-    `{"type":"conditional_number", "value":{"if":${condition}, "then":${trueValue}, "else":${falseValue}}}`,
-    Order.CONDITIONAL,
-  ];
+jsonGenerator.conditional_number = function (block) {
+  const condition = this.fromBlock(block.getInputTargetBlock("CONDITION"));
+  const trueValue = this.fromBlock(block.getInputTargetBlock("TRUE_VALUE"));
+  const falseValue = this.fromBlock(block.getInputTargetBlock("FALSE_VALUE"));
+  return `{"type":"conditional_number", "value":{"if":${condition}, "then":${trueValue}, "else":${falseValue}}}`;
 };
 
-jsonGenerator.forBlock["recurrence"] = function (block, generator) {
+jsonGenerator.recurrence = function (block) {
   const frequency = block.getFieldValue("FREQUENCY");
   const interval = block.getFieldValue("INTERVAL");
   const anchor = block.getFieldValue("ANCHOR");
-  return [
-    `{"type":"recurrence", "value":{"frequency":"${frequency}", "interval":${interval}, "anchor":"${anchor}"}}`,
-    Order.NONE,
-  ];
+  return `{"type":"recurrence", "value":{"frequency":"${frequency}", "interval":${interval}, "anchor":"${anchor}"}}`;
 };
 
-jsonGenerator.forBlock["offset"] = function (block, generator) {
+jsonGenerator.offset = function (block) {
   const offsetGrain = block.getFieldValue("OFFSET_GRAIN");
   const offsetAmount = block.getFieldValue("OFFSET_AMOUNT");
   const durationGrain = block.getFieldValue("DURATION_GRAIN");
   const durationAmount = block.getFieldValue("DURATION_AMOUNT");
 
   const offsetValue = {
-    "offset grain": offsetGrain,
-    "offset amount": offsetAmount,
+    offset_grain: offsetGrain,
+    offset_amount: offsetAmount,
     duration: {
-      "duration grain": durationGrain,
-      "duration amount": durationAmount,
+      duration_grain: durationGrain,
+      duration_amount: durationAmount,
     },
   };
 
-  return [
-    `{"type":"offset", "value":${JSON.stringify(offsetValue)}}`,
-    Order.NONE,
-  ];
+  return `{"type":"offset", "value":${JSON.stringify(offsetValue)}}`;
 };
 
-jsonGenerator.forBlock["recurrence_frame"] = function (block, generator) {
-  const recurrence = generator.valueToCode(block, "RECURRENCE", 0) || "null";
-  const offset = generator.valueToCode(block, "OFFSET", 0) || "null";
-  const body = getNestedCode(block, generator);
+jsonGenerator.recurrence_frame = function (block) {
+  const recurrenceJson = this.fromBlock(
+    block.getInputTargetBlock("RECURRENCE")
+  );
+  const offsetJson = this.fromBlock(block.getInputTargetBlock("OFFSET"));
+  const outputJson = this.fromBlock(block.getInputTargetBlock("OUTPUT"));
 
   const jsonOutput = {
     type: "recurrence_frame",
     value: {
-      recurrence: JSON.parse(recurrence)?.value,
-      offset: JSON.parse(offset)?.value,
-      body: body.map(JSON.parse),
+      recurrence: recurrenceJson ? JSON.parse(recurrenceJson) : null,
+      offset: offsetJson ? JSON.parse(offsetJson) : null,
+      output: outputJson ? JSON.parse(outputJson) : null,
     },
   };
 
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
+
+export default jsonGenerator;

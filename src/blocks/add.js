@@ -9,27 +9,35 @@ export default {
       colour: 100,
     });
 
+    console.log(this);
+
     // add a button to add more inputs
     this.appendDummyInput("values")
       .appendField("+")
       .appendField(
-        new FieldTextButton("+", function () {
-          const lastIndex = this.sourceBlock_.length++;
-          const inputName = `value_${lastIndex}`;
-
-          // add a new value input
-          const appendedInput = this.sourceBlock_
-            .appendValueInput(inputName)
-            .setCheck("Number");
-
-          // add a button to remove this input
-          appendedInput.appendField(
-            new FieldTextButton("-", function () {
-              this.sourceBlock_.removeInput(inputName);
-              this.sourceBlock_.length--;
-            })
-          );
+        new FieldTextButton("+", () => {
+          this.addInput();
         })
       );
+
+    // todo: add correct # of inputs from initialized block when loading an existing block
+    this.addInput();
+    this.addInput();
+  },
+
+  addInput: function () {
+    const lastIndex = this.length++;
+    const inputName = `value_${lastIndex}`;
+
+    // add a new value input
+    const appendedInput = this.appendValueInput(inputName).setCheck("Number");
+
+    // add a button to remove this input
+    appendedInput.appendField(
+      new FieldTextButton("-", () => {
+        this.removeInput(inputName);
+        this.length--;
+      })
+    );
   },
 };
