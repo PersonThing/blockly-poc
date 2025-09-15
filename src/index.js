@@ -22,6 +22,36 @@ const ws = Blockly.inject(blocklyDiv, {
   rtl: false,
 });
 
+// create input fields for context values
+const contextValues = {
+  base_pay: 150000,
+  wrvu: 400,
+  wrvu_bonus_threshold: 500,
+  hours: 40,
+}
+const contextDiv = document.getElementById("contextValues");
+for (const key of Object.keys(contextValues)) {
+  const label = document.createElement("label");
+  label.htmlFor = key;
+  label.innerText = key;
+
+  const input = document.createElement("input");
+  input.type = "number";
+  input.id = key;
+  input.name = key;
+  input.value = contextValues[key];
+  input.onkeyup = (e) => {
+    contextValues[key] = parseFloat(e.target.value);
+    runCode();
+  }
+
+  const container = document.createElement("div");
+  container.classList.add("contextItem");
+  container.appendChild(label);
+  container.appendChild(input);
+  container.appendChild(document.createElement("br"));
+  contextDiv.appendChild(container);
+}
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
 // In a real application, you probably shouldn't use `eval`.
@@ -31,20 +61,24 @@ const runCode = () => {
   // for now, we're using a few sample values to inject at the start of execution to allow users to test formula/s etc
   const code =
     `
-const context = {
-  output: 0,
-  base_pay: 150000,
-  wrvu: 500,
-  hours: 40
-}
+const context = ${JSON.stringify(contextValues)};
 
-` + javascriptGenerator.workspaceToCode(ws);
+${javascriptGenerator.workspaceToCode(ws)}
+
+  console.log('Output is', context.output);
+  document.getElementById('outputValue').innerText = context.output ?? "Not set";
+`;
 
   jsContainer.innerText = code;
 
-  // eval(code);
+  try {
+    eval(code);
+  } catch (e) {
+    document.getElementById('outputValue').innerHTML = `Error in code: ${e.message}`;
+    console.error("Error during generated code execution", e);
+  }
 
-  // generate json from blocks
+  // generate json from blocks0
   // this is what our APIs will persist
   let json = jsonGenerator.fromWorkspace(ws);
 

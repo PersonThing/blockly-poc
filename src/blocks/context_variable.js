@@ -12,10 +12,11 @@ export default {
             ["output", "output"],
             ["base_pay", "base_pay"],
             ["wrvu", "wrvu"],
+            ["wrvu_bonus_threshold", "wrvu_bonus_threshold"],
             ["hours", "hours"],
             ["other generated variables here", "v3"],
           ],
-          defaultValue: "DAY", // Uncomment if you want a default value
+          defaultValue: "output", // Uncomment if you want a default value
         },
       ],
       output: "Number",

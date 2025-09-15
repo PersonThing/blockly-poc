@@ -30,12 +30,41 @@ code {
   margin: 1rem;
 }
 
+#context {
+  height: 40%;
+}
+
+#context #contextValues {
+  background: #eee;
+  padding: 1rem;
+}
+
+#contextValues .contextItem {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+#contextValues label {
+  flex: 1 0 120px;
+  margin-right: 0.5rem;
+  text-align: right;
+  font-weight: bold;
+}
+
+#outputValue {
+  text-align: right;
+  font-weight: bold;
+  font-size: 1.25rem;
+  padding: 0.25rem 0;
+}
+
 #generatedJs {
-  height: 50%;
+  height: 30%;
   background-color: rgb(247, 240, 228);
 }
 
 #generatedJson {
-  height: 50%;
+  height: 30%;
   background-color: rgb(247, 240, 228);
 }
