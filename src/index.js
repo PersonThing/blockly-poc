@@ -63,6 +63,18 @@ const runCode = () => {
     `
 const context = ${JSON.stringify(contextValues)};
 
+const executeRecurrenceFrame = function(recurrenceFrame) {
+  // this is a sample implementation that just sets output to the output of the recurrence frame
+  // a real implementation would:
+  // - create frames for the interval / frequency / anchor of the recurrence frame, offset by the offset grain, amount, duration grain and amount
+  // - for each frame, execute recurrenceFrame.output(frameContext) passing in context values filtered to the current frame
+  // - aggregate the results of each frame into a final output value
+
+  // for now, we just call the output function once, passing the global context
+  // as if the recurrence frame only had one frame and didn't need to filter any data
+  context.output = recurrenceFrame.output(context);
+}
+
 ${javascriptGenerator.workspaceToCode(ws)}
 
   console.log('Output is', context.output);

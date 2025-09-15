@@ -9,7 +9,6 @@ const config = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: './', // Use relative paths for GitHub Pages
   },
   // Enable webpack-dev-server to get hot refresh of the app.
   devServer: {
@@ -38,6 +37,7 @@ module.exports = (env, argv) => {
   if (argv.mode === 'development') {
     // Set the output path to the `build` directory
     // so we don't clobber production builds.
+    config.output.publicPath = '/';
     config.output.path = path.resolve(__dirname, 'build');
 
     // Generate source maps for our code for easier debugging.
@@ -55,6 +55,8 @@ module.exports = (env, argv) => {
     // Ignore spurious warnings from source-map-loader
     // It can't find source maps for some Closure modules and that is expected
     config.ignoreWarnings = [/Failed to parse source map/];
+  } else {
+    config.output.publicPath = './';
   }
   return config;
 };
