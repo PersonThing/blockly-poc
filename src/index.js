@@ -25,9 +25,9 @@ const ws = Blockly.inject(blocklyDiv, {
 // create input fields for context values
 const context = {
   base_pay: 150000,
-  wrvu: 501,
+  wrvu: 400,
+  wrvu_bonus_threshold: 200,
   hours: 40,
-  wrvu_bonus_threshold: 500,
   hour_bonus_threshold: 20,
 };
 const contextDiv = document.getElementById("contextValues");
@@ -108,6 +108,18 @@ const runCode = () => {
       { id: 6, name: "Frank", wrvu: 150, hours: 15 },
       { id: 7, name: "Grace", wrvu: 50, hours: 5 },
     ],
+    5: [
+      { id: 1, name: "Alice", wrvu: 300, hours: 30 },
+      { id: 2, name: "Bob", wrvu: 200, hours: 20 },
+      { id: 3, name: "Charlie", wrvu: 100, hours: 10 },
+      { id: 4, name: "David", wrvu: 400, hours: 40 },
+      { id: 5, name: "Eve", wrvu: 250, hours: 25 },
+      { id: 6, name: "Frank", wrvu: 150, hours: 15 },
+      { id: 7, name: "Grace", wrvu: 50, hours: 5 },
+      { id: 8, name: "Heidi", wrvu: 350, hours: 35 },
+      { id: 9, name: "Ivan", wrvu: 450, hours: 45 },
+      { id: 10, name: "Judy", wrvu: 550, hours: 55 },
+    ]
   };
 
   // execute a segment frame, calling outputCallback for each participant in the segment

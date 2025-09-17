@@ -9,11 +9,10 @@ export default {
           name: "VARIABLE_NAME",
           check: "Number",
           options: [
-            ["output", "output"],
             ["base_pay", "base_pay"],
             ["wrvu", "wrvu"],
-            ["hours", "hours"],
             ["wrvu_bonus_threshold", "wrvu_bonus_threshold"],
+            ["hours", "hours"],
             ["hour_bonus_threshold", "hour_bonus_threshold"],
           ],
           defaultValue: "output", // Uncomment if you want a default value

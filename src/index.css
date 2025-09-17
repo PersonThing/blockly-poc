@@ -32,6 +32,7 @@ code {
 
 #context {
   height: 50%;
+  overflow: auto;
 }
 
 #context #outputLogs {
