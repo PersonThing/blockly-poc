@@ -29,11 +29,6 @@ jsonGenerator.fromBlock = function (block) {
   }
 };
 
-jsonGenerator.set_output = function (block) {
-  const value = this.fromBlock(block.getInputTargetBlock("VALUE"));
-  return `{"type":"set_output", "value": ${value}}`;
-};
-
 jsonGenerator.math_number = function (block) {
   const num = Number(block.getFieldValue("NUM"));
   return `{"type": "number", "value": ${isNaN(num) ? 0 : num} }`;
@@ -90,7 +85,9 @@ jsonGenerator.recurrence = function (block) {
   const frequency = block.getFieldValue("FREQUENCY");
   const interval = block.getFieldValue("INTERVAL");
   const anchor = block.getFieldValue("ANCHOR");
-  return `{"type":"recurrence", "value":{"frequency":"${frequency}", "interval":${interval}, "anchor":"${anchor}"}}`;
+  const windowStart = block.getFieldValue("WINDOW_START");
+  const windowEnd = block.getFieldValue("WINDOW_END");
+  return `{"type":"recurrence", "value":{"frequency":"${frequency}", "interval":${interval}, "anchor":"${anchor}", "window_start":"${windowStart}", "window_end":"${windowEnd}"}}`;
 };
 
 jsonGenerator.offset = function (block) {
@@ -111,6 +108,31 @@ jsonGenerator.offset = function (block) {
   return `{"type":"offset", "value":${JSON.stringify(offsetValue)}}`;
 };
 
+jsonGenerator.define_wte = function (block) {
+  const name = block.getFieldValue("NAME");
+  const outputJson = this.fromBlock(block.getInputTargetBlock("OUTPUT"));
+  const jsonOutput = {
+    type: "define_wte",
+    value: {
+      name: name,
+      output: outputJson ? JSON.parse(outputJson) : null,
+    },
+  };
+
+  return `${JSON.stringify(jsonOutput, null, 2)}`;
+};
+
+jsonGenerator.call_wte = function (block) {
+  const name = block.getFieldValue("NAME");
+  const jsonOutput = {
+    type: "call_wte",
+    value: {
+      name: name,
+    },
+  };
+  return `${JSON.stringify(jsonOutput, null, 2)}`;
+}
+
 jsonGenerator.recurrence_frame = function (block) {
   const recurrenceJson = this.fromBlock(
     block.getInputTargetBlock("RECURRENCE")
@@ -123,6 +145,24 @@ jsonGenerator.recurrence_frame = function (block) {
     value: {
       recurrence: recurrenceJson ? JSON.parse(recurrenceJson) : null,
       offset: offsetJson ? JSON.parse(offsetJson) : null,
+      output: outputJson ? JSON.parse(outputJson) : null,
+    },
+  };
+
+  return `${JSON.stringify(jsonOutput, null, 2)}`;
+};
+
+jsonGenerator.segment_frame = function (block) {
+  
+  const name = block.getFieldValue("NAME");
+  const segmentId = block.getFieldValue("SEGMENT_ID");
+  const outputJson = this.fromBlock(block.getInputTargetBlock("OUTPUT"));
+
+  const jsonOutput = {
+    type: "segment_frame",
+    value: {
+      name: name,
+      segment_id: segmentId,
       output: outputJson ? JSON.parse(outputJson) : null,
     },
   };

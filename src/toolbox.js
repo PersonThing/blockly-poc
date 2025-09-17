@@ -22,7 +22,11 @@ export const toolbox = {
       contents: [
         {
           kind: "block",
-          type: "set_output"
+          type: "define_wte"
+        },
+        {
+          kind: "block",
+          type: "call_wte"
         },
         {
           kind: "block",
@@ -50,15 +54,19 @@ export const toolbox = {
         },
         {
           kind: "block",
+          type: "segment_frame",
+        },
+        {
+          kind: "block",
+          type: "recurrence_frame",
+        },
+        {
+          kind: "block",
           type: "recurrence",
         },
         {
           kind: "block",
           type: "offset",
-        },
-        {
-          kind: "block",
-          type: "recurrence_frame",
         },
       ],
     },

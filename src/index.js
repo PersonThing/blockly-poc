@@ -23,14 +23,15 @@ const ws = Blockly.inject(blocklyDiv, {
 });
 
 // create input fields for context values
-const contextValues = {
+const context = {
   base_pay: 150000,
-  wrvu: 400,
-  wrvu_bonus_threshold: 500,
+  wrvu: 501,
   hours: 40,
-}
+  wrvu_bonus_threshold: 500,
+  hour_bonus_threshold: 20,
+};
 const contextDiv = document.getElementById("contextValues");
-for (const key of Object.keys(contextValues)) {
+for (const key of Object.keys(context)) {
   const label = document.createElement("label");
   label.htmlFor = key;
   label.innerText = key;
@@ -39,11 +40,11 @@ for (const key of Object.keys(contextValues)) {
   input.type = "number";
   input.id = key;
   input.name = key;
-  input.value = contextValues[key];
+  input.value = context[key];
   input.onkeyup = (e) => {
-    contextValues[key] = parseFloat(e.target.value);
+    context[key] = parseFloat(e.target.value);
     runCode();
-  }
+  };
 
   const container = document.createElement("div");
   container.classList.add("contextItem");
@@ -52,46 +53,175 @@ for (const key of Object.keys(contextValues)) {
   container.appendChild(document.createElement("br"));
   contextDiv.appendChild(container);
 }
+
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
 // In a real application, you probably shouldn't use `eval`.
 const runCode = () => {
-  // generate javascript from blocks
-  // when editing, we should see all available context variables/list data, be able to adjust them, and set preview values for them
-  // for now, we're using a few sample values to inject at the start of execution to allow users to test formula/s etc
-  const code =
-    `
-const context = ${JSON.stringify(contextValues)};
+  // Create some utility functions available to the eval environment
+  const wteDefinitions = {}; // name -> function - created by define_wte blocks, called by call_wte blocks
+  const defineWte = function (name, outputCallback) {
+    wteDefinitions[name] = outputCallback;
+  };
+  const callWte = function (name, contextOverrides) {
+    const wteFunc = wteDefinitions[name];
+    if (wteFunc) {
+      const context = { ...contextOverrides };
+      return logAndReturn(`wte:${name}`, null, wteFunc(context));
+    }
+    console.error(`No WTE defined with name ${name}`);
+    return logAndReturn(
+      "wte_error",
+      { name },
+      `No WTE defined with name ${name}`,
+      null
+    );
+  };
 
-const executeRecurrenceFrame = function(recurrenceFrame) {
-  // this is a sample implementation that just sets output to the output of the recurrence frame
-  // a real implementation would:
-  // - create frames for the interval / frequency / anchor of the recurrence frame, offset by the offset grain, amount, duration grain and amount
-  // - for each frame, execute recurrenceFrame.output(frameContext) passing in context values filtered to the current frame
-  // - aggregate the results of each frame into a final output value
+  const executionLogs = [];
+  const logDiv = document.getElementById("outputLogs");
+  logDiv.innerHTML = "";
 
-  // for now, we just call the output function once, passing the global context
-  // as if the recurrence frame only had one frame and didn't need to filter any data
-  context.output = recurrenceFrame.output(context);
-}
+  const flatten = (val) =>
+    Array.isArray(val) ? val.reduce((acc, v) => acc + flatten(v), 0) : val;
 
-${javascriptGenerator.workspaceToCode(ws)}
+  const logAndReturn = (label, meta, result) => {
+    executionLogs.push({ label, meta, result });
+    return result;
+  };
 
-  console.log('Output is', context.output);
-  document.getElementById('outputValue').innerText = context.output ?? "Not set";
-`;
+  // sample segments - id of segment is same as # of participants in segment
+  const sampleSegments = {
+    1: [{ id: 1, name: "Alice", wrvu: 300, hours: 30 }],
+    2: [
+      { id: 2, name: "Bob", wrvu: 200, hours: 20 },
+      { id: 3, name: "Charlie", wrvu: 100, hours: 10 },
+    ],
+    3: [
+      { id: 1, name: "Alice", wrvu: 300, hours: 30 },
+      { id: 2, name: "Bob", wrvu: 200, hours: 20 },
+      { id: 3, name: "Charlie", wrvu: 100, hours: 10 },
+    ],
+    4: [
+      { id: 4, name: "David", wrvu: 400, hours: 40 },
+      { id: 5, name: "Eve", wrvu: 250, hours: 25 },
+      { id: 6, name: "Frank", wrvu: 150, hours: 15 },
+      { id: 7, name: "Grace", wrvu: 50, hours: 5 },
+    ],
+  };
 
+  // execute a segment frame, calling outputCallback for each participant in the segment
+  // outputCallback is expected to return a value for that participant
+  // returns an array of results, one per participant
+  // each result is logged with the participant name
+  const executeSegmentFrame = function (name, segmentId, outputCallback) {
+    const participants = sampleSegments[segmentId] || [];
+    const executionContext = {
+      ...context,
+      participants,
+    };
+    return participants.map((p, i) =>
+      logAndReturn(
+        `segment_frame:${i+1}:${p.name}`,
+        { name, participant: p },
+        outputCallback({
+          ...executionContext,
+          ...p,
+        })
+      )
+    );
+  };
+
+  // execute a recurrence frame, calling outputCallback for each frame
+  // outputCallback is expected to return a value for that frame
+  // returns an array of results, one per frame
+  // each result is logged with the frame start date
+  const executeRecurrenceFrame = function (recurrence, offset, outputCallback) {
+    const frames = [];
+    const startDate = new Date(recurrence.window_start);
+    const endDate = new Date(recurrence.window_end);
+    const anchorDate = new Date(recurrence.anchor);
+    let currentDate = new Date(anchorDate);
+
+    // TODO: respect offset
+
+    while (currentDate < endDate) {
+      // if currentDate is within startDate and endDate, add a frame
+      if (currentDate >= startDate && currentDate <= endDate) {
+        frames.push({
+          start: new Date(currentDate),
+          end: new Date(currentDate), // for now, same as start
+        });
+      }
+
+      // increment currentDate by recurrence.frequency and recurrence.interval
+      switch (recurrence.frequency) {
+        case "DAY":
+          currentDate.setDate(
+            currentDate.getDate() + (recurrence.interval || 1)
+          );
+          break;
+        case "WEEK":
+          currentDate.setDate(
+            currentDate.getDate() + 7 * (recurrence.interval || 1)
+          );
+          break;
+        case "HALF_MONTH":
+          currentDate.setDate(
+            currentDate.getDate() + 15 * (recurrence.interval || 1)
+          );
+          break;
+        case "MONTH":
+          currentDate.setMonth(
+            currentDate.getMonth() + (recurrence.interval || 1)
+          );
+          break;
+      }
+    }
+
+    return frames.map((frame, i) => {
+      const date = new Date(frame.start).toISOString().split("T")[0];
+      return logAndReturn(
+        `recurrence_frame`,
+        { date },
+        outputCallback(context)
+      );
+    });
+  };
+
+  const code = javascriptGenerator.workspaceToCode(ws);
   jsContainer.innerText = code;
 
   try {
     eval(code);
   } catch (e) {
-    document.getElementById('outputValue').innerHTML = `Error in code: ${e.message}`;
     console.error("Error during generated code execution", e);
   }
 
-  // generate json from blocks0
-  // this is what our APIs will persist
+  executionLogs.reverse().forEach(({ label, meta, result }) => {
+    console.log(`${label}: `, result);
+    const div = document.createElement("div");
+    div.classList.add("logEntry");
+
+    const lbl = document.createElement("label");
+    lbl.innerText = `${label}: `;
+    div.appendChild(lbl);
+
+    const pre = document.createElement("pre");
+    pre.innerText = JSON.stringify(result, null, 2);
+    div.appendChild(pre);
+
+    if (meta != null) {
+      const metaDiv = document.createElement("pre");
+      metaDiv.classList.add("logMeta");
+      metaDiv.innerText = JSON.stringify(meta, null, 2);
+      div.appendChild(metaDiv);
+    }
+
+    logDiv.appendChild(div);
+  });
+
+  // generate json from blocks
   let json = jsonGenerator.fromWorkspace(ws);
 
   // parse and format it

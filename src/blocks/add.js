@@ -9,8 +9,6 @@ export default {
       colour: 100,
     });
 
-    console.log(this);
-
     // add a button to add more inputs
     this.appendDummyInput("values")
       .appendField("+")
