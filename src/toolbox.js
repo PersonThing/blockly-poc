@@ -17,41 +17,9 @@ export const toolbox = {
   contents: [
     {
       kind: "category",
-      name: "Custom Blocks",
+      name: "Frames",
       categorystyle: "text_category",
       contents: [
-        {
-          kind: "block",
-          type: "define_wte"
-        },
-        {
-          kind: "block",
-          type: "call_wte"
-        },
-        {
-          kind: "block",
-          type: "add",
-        },
-        {
-          kind: "block",
-          type: "subtract",
-        },
-        {
-          kind: "block",
-          type: "multiply",
-        },
-        {
-          kind: 'block',
-          type: 'divide',
-        },
-        {
-          kind: "block",
-          type: "context_variable"
-        },
-        {
-          kind: "block",
-          type: "conditional_number",
-        },
         {
           kind: "block",
           type: "segment_frame",
@@ -72,13 +40,62 @@ export const toolbox = {
     },
     {
       kind: "category",
-      name: "Logic",
-      categorystyle: "logic_category",
+      name: "WTEs",
+      categorystyle: "procedure_category",
       contents: [
         {
           kind: "block",
-          type: "controls_if",
+          type: "define_wte",
         },
+        {
+          kind: "block",
+          type: "call_wte",
+        },
+        {
+          kind: "block",
+          type: "context_variable",
+        },
+        {
+          kind: "block",
+          type: "wte_constant",
+        },
+        {
+          kind: "block",
+          type: "add",
+        },
+        {
+          kind: "block",
+          type: "subtract",
+        },
+        {
+          kind: "block",
+          type: "multiply",
+        },
+        {
+          kind: "block",
+          type: "divide",
+        },
+        {
+          kind: "block",
+          type: "conditional_number",
+        },
+      ],
+    },
+    {
+      kind: "sep",
+    },
+    {
+      kind: "sep",
+    },
+    {
+      kind: "category",
+      name: "Logic",
+      categorystyle: "logic_category",
+      contents: [
+        // {
+        //   kind: "block",
+        //   type: "controls_if",
+        // },
         {
           kind: "block",
           type: "logic_compare",
@@ -102,69 +119,6 @@ export const toolbox = {
         {
           kind: "block",
           type: "logic_ternary",
-        },
-      ],
-    },
-    {
-      kind: "category",
-      name: "Loops",
-      categorystyle: "loop_category",
-      contents: [
-        {
-          kind: "block",
-          type: "controls_repeat_ext",
-          inputs: {
-            TIMES: {
-              shadow: {
-                type: "math_number",
-                fields: {
-                  NUM: 10,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "controls_whileUntil",
-        },
-        {
-          kind: "block",
-          type: "controls_for",
-          inputs: {
-            FROM: {
-              shadow: {
-                type: "math_number",
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-            TO: {
-              shadow: {
-                type: "math_number",
-                fields: {
-                  NUM: 10,
-                },
-              },
-            },
-            BY: {
-              shadow: {
-                type: "math_number",
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "controls_forEach",
-        },
-        {
-          kind: "block",
-          type: "controls_flow_statements",
         },
       ],
     },
@@ -374,300 +328,18 @@ export const toolbox = {
         },
       ],
     },
-    {
-      kind: "category",
-      name: "Text",
-      categorystyle: "text_category",
-      contents: [
-        {
-          kind: "block",
-          type: "text",
-        },
-        {
-          kind: "block",
-          type: "text_join",
-        },
-        {
-          kind: "block",
-          type: "text_append",
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: "",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_length",
-          inputs: {
-            VALUE: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: "abc",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_isEmpty",
-          inputs: {
-            VALUE: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: "",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_indexOf",
-          inputs: {
-            VALUE: {
-              block: {
-                type: "variables_get",
-              },
-            },
-            FIND: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: "abc",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_charAt",
-          inputs: {
-            VALUE: {
-              block: {
-                type: "variables_get",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_getSubstring",
-          inputs: {
-            STRING: {
-              block: {
-                type: "variables_get",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_changeCase",
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: "abc",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_trim",
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: "abc",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_count",
-          inputs: {
-            SUB: {
-              shadow: {
-                type: "text",
-              },
-            },
-            TEXT: {
-              shadow: {
-                type: "text",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_replace",
-          inputs: {
-            FROM: {
-              shadow: {
-                type: "text",
-              },
-            },
-            TO: {
-              shadow: {
-                type: "text",
-              },
-            },
-            TEXT: {
-              shadow: {
-                type: "text",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "text_reverse",
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: "text",
-              },
-            },
-          },
-        },
-      ],
-    },
-    {
-      kind: "category",
-      name: "Lists",
-      categorystyle: "list_category",
-      contents: [
-        {
-          kind: "block",
-          type: "lists_create_with",
-        },
-        {
-          kind: "block",
-          type: "lists_create_with",
-        },
-        {
-          kind: "block",
-          type: "lists_repeat",
-          inputs: {
-            NUM: {
-              shadow: {
-                type: "math_number",
-                fields: {
-                  NUM: 5,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "lists_length",
-        },
-        {
-          kind: "block",
-          type: "lists_isEmpty",
-        },
-        {
-          kind: "block",
-          type: "lists_indexOf",
-          inputs: {
-            VALUE: {
-              block: {
-                type: "variables_get",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "lists_getIndex",
-          inputs: {
-            VALUE: {
-              block: {
-                type: "variables_get",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "lists_setIndex",
-          inputs: {
-            LIST: {
-              block: {
-                type: "variables_get",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "lists_getSublist",
-          inputs: {
-            LIST: {
-              block: {
-                type: "variables_get",
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "lists_split",
-          inputs: {
-            DELIM: {
-              shadow: {
-                type: "text",
-                fields: {
-                  TEXT: ",",
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: "block",
-          type: "lists_sort",
-        },
-        {
-          kind: "block",
-          type: "lists_reverse",
-        },
-      ],
-    },
-    {
-      kind: "sep",
-    },
-    {
-      kind: "sep",
-    },
+
     {
       kind: "category",
       name: "Variables",
       categorystyle: "variable_category",
       custom: "VARIABLE",
     },
-    {
-      kind: "category",
-      name: "Functions",
-      categorystyle: "procedure_category",
-      custom: "PROCEDURE",
-    },
+    // {
+    //   kind: "category",
+    //   name: "Functions",
+    //   categorystyle: "procedure_category",
+    //   custom: "PROCEDURE",
+    // },
   ],
 };

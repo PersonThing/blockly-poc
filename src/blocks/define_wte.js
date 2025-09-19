@@ -2,7 +2,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: "define_wte",
-      message0: "Define WTE: %1 \nOutput %2",
+      message0: "Define Custom WTE: %1 \nOutput %2",
       args0: [
         {
           type: "field_input",

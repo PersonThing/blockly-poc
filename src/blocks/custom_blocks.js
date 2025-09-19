@@ -1,6 +1,5 @@
 import * as Blockly from "blockly/core";
 
-
 import './FieldTextButton.js'
 import defineWte from "./define_wte.js";
 import callWte from "./call_wte.js";
@@ -27,3 +26,7 @@ Blockly.Blocks['recurrence_frame'] = recurrenceFrameBlock;
 Blockly.Blocks['context_variable'] = contextVariableBlock;
 Blockly.Blocks['conditional_number'] = conditionalNumberBlock;
 Blockly.Blocks['segment_frame'] = segmentFrameBlock;
+
+// wtes
+import wte_constant from "./wtes/wte_constant.js";
+Blockly.Blocks['wte_constant'] = wte_constant;

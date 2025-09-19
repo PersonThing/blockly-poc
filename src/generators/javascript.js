@@ -126,4 +126,10 @@ javascriptGenerator.forBlock["call_wte"] = function (block, generator) {
   return [`callWte('${name}', context)`, Order.NONE];
 };
 
+// WTEs
+javascriptGenerator.forBlock["wte_constant"] = function (block, generator) {
+  const value = block.getFieldValue("x");
+  return [`(${value})`, Order.NONE];
+};
+
 export default javascriptGenerator;
