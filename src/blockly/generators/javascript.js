@@ -13,9 +13,9 @@ javascriptGenerator.forBlock["add"] = function (block, generator) {
     values.push(value);
   }
   return [
-    `(${values
+    `${values
       .flatMap((v) => `flatten(${v})`)
-      .join(" + ")})`,
+      .join(" + ")}`,
     Order.ADDITION,
   ];
 };
@@ -28,9 +28,9 @@ javascriptGenerator.forBlock["subtract"] = function (block, generator) {
     values.push(value);
   }
   return [
-    `(${values
+    `${values
       .flatMap((v) => `flatten(${v})`)
-      .join(" - ")})`,
+      .join(" - ")}`,
     Order.SUBTRACTION,
   ];
 };
@@ -38,13 +38,13 @@ javascriptGenerator.forBlock["subtract"] = function (block, generator) {
 javascriptGenerator.forBlock["multiply"] = function (block, generator) {
   const a = generator.valueToCode(block, "A", Order.NONE) || "0";
   const b = generator.valueToCode(block, "B", Order.NONE) || "0";
-  return [`(${a} * ${b})`, Order.MULTIPLICATION];
+  return [`${a} * ${b}`, Order.MULTIPLICATION];
 };
 
 javascriptGenerator.forBlock["divide"] = function (block, generator) {
   const a = generator.valueToCode(block, "A", Order.NONE) || "0";
   const b = generator.valueToCode(block, "B", Order.NONE) || "0";
-  return [`(${a} / ${b})`, Order.DIVISION];
+  return [`${a} / ${b}`, Order.DIVISION];
 };
 
 javascriptGenerator.forBlock["conditional_number"] = function (
@@ -58,7 +58,7 @@ javascriptGenerator.forBlock["conditional_number"] = function (
   const falseValue =
     generator.valueToCode(block, "FALSE_VALUE", Order.NONE) || "0";
   return [
-    `(${condition} ? ${trueValue} : ${falseValue})`,
+    `${condition} ? ${trueValue} : ${falseValue}`,
     Order.CONDITIONAL,
   ];
 };

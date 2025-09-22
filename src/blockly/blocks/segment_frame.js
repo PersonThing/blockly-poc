@@ -33,7 +33,7 @@ export default {
       helpUrl: "",
       // previousStatement: null,
       // nextStatement: null,
-      output: "Number",
+      output: "Array",
     });
   },
 };

@@ -17,10 +17,6 @@ export default {
           this.addInput();
         })
       );
-
-    // todo: add correct # of inputs from initialized block when loading an existing block
-    this.addInput();
-    this.addInput();
   },
 
   addInput: function () {
@@ -37,5 +33,18 @@ export default {
         this.length--;
       })
     );
+  },
+  
+  saveExtraState: function () {
+    return {
+      length: this.length,
+    };
+  },
+
+  loadExtraState: function (state) {
+    for (let i = 0; i < state.length; i++) {
+      console.log('adding extra input', i)
+      this.addInput();
+    }
   },
 };

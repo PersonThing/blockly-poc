@@ -13,23 +13,38 @@ export default {
     this.appendDummyInput("values")
       .appendField("-")
       .appendField(
-        new FieldTextButton("+", function () {
-          const lastIndex = this.sourceBlock_.length++;
-          const inputName = `value_${lastIndex}`;
-
-          // add a new value input
-          const appendedInput = this.sourceBlock_
-            .appendValueInput(inputName)
-            .setCheck("Number");
-
-          // add a button to remove this input
-          appendedInput.appendField(
-            new FieldTextButton("-", function () {
-              this.sourceBlock_.removeInput(inputName);
-              this.sourceBlock_.length--;
-            })
-          );
+        new FieldTextButton("+", () => {
+          this.addInput();
         })
       );
+  },
+
+  addInput: function () {
+    const lastIndex = this.length++;
+    const inputName = `value_${lastIndex}`;
+
+    // add a new value input
+    const appendedInput = this.appendValueInput(inputName).setCheck("Number");
+
+    // add a button to remove this input
+    appendedInput.appendField(
+      new FieldTextButton("-", () => {
+        this.removeInput(inputName);
+        this.length--;
+      })
+    );
+  },
+  
+  saveExtraState: function () {
+    return {
+      length: this.length,
+    };
+  },
+
+  loadExtraState: function (state) {
+    for (let i = 0; i < state.length; i++) {
+      console.log('adding extra input', i)
+      this.addInput();
+    }
   },
 };
