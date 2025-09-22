@@ -1,5 +1,7 @@
 <div id="pageContainer">
-  <div id="outputPane">
+  <div id="compPlans">Comp plans</div>
+  <div id="blocklyContainer" bind:this={blocklyContainer}></div>
+  <div id="inputOutputPane">
     <div id="context">
       <div id="contextValues">
         {#each Object.keys(context) as key}
@@ -25,7 +27,6 @@
     <pre id="generatedJs">{generatedJs}</pre>
     <pre id="generatedJson">{generatedJson}</pre>
   </div>
-  <div id="blocklyContainer" bind:this={blocklyContainer}></div>
 </div>
 
 <script>

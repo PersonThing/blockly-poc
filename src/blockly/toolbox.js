@@ -57,23 +57,11 @@ export const toolbox = {
         },
         {
           kind: "block",
-          type: "wte_constant",
-        },
-        {
-          kind: "block",
           type: "add",
         },
         {
           kind: "block",
           type: "subtract",
-        },
-        {
-          kind: "block",
-          type: "multiply",
-        },
-        {
-          kind: "block",
-          type: "divide",
         },
         {
           kind: "block",

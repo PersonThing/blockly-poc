@@ -35,18 +35,6 @@ javascriptGenerator.forBlock["subtract"] = function (block, generator) {
   ];
 };
 
-javascriptGenerator.forBlock["multiply"] = function (block, generator) {
-  const a = generator.valueToCode(block, "A", Order.NONE) || "0";
-  const b = generator.valueToCode(block, "B", Order.NONE) || "0";
-  return [`${a} * ${b}`, Order.MULTIPLICATION];
-};
-
-javascriptGenerator.forBlock["divide"] = function (block, generator) {
-  const a = generator.valueToCode(block, "A", Order.NONE) || "0";
-  const b = generator.valueToCode(block, "B", Order.NONE) || "0";
-  return [`${a} / ${b}`, Order.DIVISION];
-};
-
 javascriptGenerator.forBlock["conditional_number"] = function (
   block,
   generator

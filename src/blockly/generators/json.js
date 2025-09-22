@@ -67,18 +67,6 @@ jsonGenerator.subtract = function (block) {
   return `{"type":"subtract", "values": [${values.join(',')}]}`;
 };
 
-jsonGenerator.multiply = function (block) {
-  const valueA = this.fromBlock(block.getInputTargetBlock('A'));
-  const valueB = this.fromBlock(block.getInputTargetBlock('B'));
-  return `{"type":"multiply", "value":{"A":${valueA}, "B":${valueB}}}`;
-};
-
-jsonGenerator.divide = function (block) {
-  const valueA = this.fromBlock(block.getInputTargetBlock('A'));
-  const valueB = this.fromBlock(block.getInputTargetBlock('B'));
-  return `{"type":"divide", "value":{"A":${valueA}, "B":${valueB}}}`;
-};
-
 jsonGenerator.conditional_number = function (block) {
   const condition = this.fromBlock(block.getInputTargetBlock('CONDITION'));
   const trueValue = this.fromBlock(block.getInputTargetBlock('TRUE_VALUE'));
