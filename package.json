@@ -5,9 +5,8 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production",
-    "start": "webpack serve --open --mode development",
+    "dev": "vite",
+    "build": "vite build",
     "deploy": "npm run build && node deploy-gh-pages.js"
   },
   "keywords": [
@@ -16,14 +15,13 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
     "css-loader": "^6.7.1",
     "gh-pages": "^6.3.0",
-    "html-webpack-plugin": "^5.5.0",
     "source-map-loader": "^4.0.1",
     "style-loader": "^3.3.1",
-    "webpack": "^5.76.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1"
+    "svelte": "^5.38.10",
+    "vite": "^7.1.6"
   },
   "dependencies": {
     "@blockly/field-date": "^10.0.2",
