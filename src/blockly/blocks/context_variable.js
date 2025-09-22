@@ -2,7 +2,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: "context_variable",
-      message0: "Context %1",
+      message0: "Constant %1",
       args0: [
         {
           type: "field_dropdown",

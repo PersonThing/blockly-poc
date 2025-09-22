@@ -5,6 +5,3 @@
 <main>
   <BlocklyWorkspace />
 </main>
-
-<style>
-</style>

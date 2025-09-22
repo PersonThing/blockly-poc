@@ -1,31 +1,35 @@
 <div id="pageContainer">
-  <div id="compPlans">Comp plans</div>
   <div id="blocklyContainer" bind:this={blocklyContainer}></div>
   <div id="inputOutputPane">
-    <div id="context">
-      <div id="contextValues">
-        {#each Object.keys(context) as key}
-          <div class="contextItem">
-            <label for={key}>{key}:</label>
-            <input type="number" id={key} name={key} bind:value={context[key]} onkeyup={runCode} />
-            <br />
-          </div>
-        {/each}
-      </div>
-      <div id="outputLogs">
-        {#each outputLogs as log}
-          <div class="logEntry">
-            <label>{log.label}:</label>
-            <pre>{JSON.stringify(log.result, null, 2)}</pre>
-            {#if log.meta}
-              <pre class="logMeta">{JSON.stringify(log.meta, null, 2)}</pre>
-            {/if}
-          </div>
-        {/each}
-      </div>
+    <div id="input">
+      <h2>Input</h2>
+      {#each Object.keys(context) as key}
+        <div class="inputItem">
+          <label for={key}>{key}:</label>
+          <input type="number" id={key} name={key} bind:value={context[key]} onkeyup={runCode} />
+          <br />
+        </div>
+      {/each}
     </div>
-    <pre id="generatedJs">{generatedJs}</pre>
-    <pre id="generatedJson">{generatedJson}</pre>
+    <div id="output">
+      <h2>Output</h2>
+      {#each outputLogs as log}
+        <div class="logEntry">
+          <pre>{JSON.stringify(log.result, null, 2)}</pre>
+          <label>{log.label}</label>
+          {#if log.meta}
+            <pre class="logMeta">{JSON.stringify(log.meta, null, 2)}</pre>
+          {/if}
+        </div>
+      {/each}
+    </div>
+    <div id="generatedCode">
+      <div>
+        <button onclick={() => (showJs = false)} class:active={!showJs}>JSON</button>
+        <button onclick={() => (showJs = true)} class:active={showJs}>JS</button>
+      </div>
+      <pre>{showJs ? generatedJs : generatedJson}</pre>
+    </div>
   </div>
 </div>
 
@@ -51,6 +55,8 @@
     hours: 40,
     hour_bonus_threshold: 20,
   });
+
+  let showJs = $state(false);
 
   // sample segments - id of segment is same as # of participants in segment
   const sampleSegments = {
