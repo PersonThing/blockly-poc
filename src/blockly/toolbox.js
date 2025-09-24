@@ -16,32 +16,9 @@ export const toolbox = {
   kind: "categoryToolbox",
   contents: [
     {
-      kind: "category",
-      name: "Frames",
-      categorystyle: "text_category",
-      contents: [
-        {
-          kind: "block",
-          type: "segment_frame",
-        },
-        {
-          kind: "block",
-          type: "recurrence_frame",
-        },
-        {
-          kind: "block",
-          type: "recurrence",
-        },
-        {
-          kind: "block",
-          type: "offset",
-        },
-      ],
-    },
-    {
-      kind: "category",
-      name: "WTEs",
-      categorystyle: "procedure_category",
+      kind: 'category',
+      name: 'Custom WTEs',
+      categorystyle: 'procedure_category',
       contents: [
         {
           kind: "block",
@@ -51,6 +28,20 @@ export const toolbox = {
           kind: "block",
           type: "call_wte",
         },
+      ]
+    },
+    {
+      kind: 'category',
+      name: 'System WTEs',
+      categorystyle: 'procedure_category',
+      contents: [
+      ]
+    },
+    {
+      kind: 'category',
+      name: 'Building blocks',
+      categorystyle: 'logic_category',
+      contents: [
         {
           kind: "block",
           type: "context_variable",
@@ -67,19 +58,6 @@ export const toolbox = {
           kind: "block",
           type: "conditional_number",
         },
-      ],
-    },
-    {
-      kind: "sep",
-    },
-    {
-      kind: "sep",
-    },
-    {
-      kind: "category",
-      name: "Logic",
-      categorystyle: "logic_category",
-      contents: [
         // {
         //   kind: "block",
         //   type: "controls_if",
@@ -108,13 +86,6 @@ export const toolbox = {
           kind: "block",
           type: "logic_ternary",
         },
-      ],
-    },
-    {
-      kind: "category",
-      name: "Math",
-      categorystyle: "math_category",
-      contents: [
         {
           kind: "block",
           type: "math_number",
@@ -316,13 +287,36 @@ export const toolbox = {
         },
       ],
     },
-
     {
       kind: "category",
-      name: "Variables",
-      categorystyle: "variable_category",
-      custom: "VARIABLE",
+      name: "Frames",
+      categorystyle: "text_category",
+      contents: [
+        {
+          kind: "block",
+          type: "segment_frame",
+        },
+        {
+          kind: "block",
+          type: "recurrence_frame",
+        },
+        {
+          kind: "block",
+          type: "recurrence",
+        },
+        {
+          kind: "block",
+          type: "offset",
+        },
+      ],
     },
+
+    // {
+    //   kind: "category",
+    //   name: "Variables",
+    //   categorystyle: "variable_category",
+    //   custom: "VARIABLE",
+    // },
     // {
     //   kind: "category",
     //   name: "Functions",
