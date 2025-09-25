@@ -42,6 +42,7 @@ export default {
   },
 
   loadExtraState: function (state) {
+    console.log('load extra state for add block', state.length)
     for (let i = 0; i < state.length; i++) {
       this.addInput();
     }

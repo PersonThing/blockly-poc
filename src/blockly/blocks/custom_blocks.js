@@ -1,7 +1,7 @@
 import * as Blockly from "blockly/core";
 
 import './FieldTextButton.js'
-import { defineWTE, callWTE } from "./custom_wte.js";
+import { defineWTE, callWTE } from "./custom_wte.svelte.js";
 import addBlock from "./add.js";
 import subtractBlock from "./subtract.js";
 import offsetBlock from "./offset.js";
