@@ -35,6 +35,19 @@ javascriptGenerator.forBlock["subtract"] = function (block, generator) {
   ];
 };
 
+javascriptGenerator.forBlock["make_array"] = function (block, generator) {
+  const values = [];
+  for (let i = 0; i < block.length; i++) {
+    const inputName = `value_${i}`;
+    const value = generator.valueToCode(block, inputName, 0) || "null";
+    values.push(value);
+  }
+  return [
+    `[${values.join(",")}]`,
+    Order.NONE,
+  ];
+};
+
 javascriptGenerator.forBlock["conditional_number"] = function (
   block,
   generator

@@ -56,6 +56,10 @@ export const toolbox = {
         },
         {
           kind: "block",
+          type: "make_array",
+        },
+        {
+          kind: "block",
           type: "conditional_number",
         },
         // {

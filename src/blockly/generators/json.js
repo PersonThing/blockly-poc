@@ -59,6 +59,14 @@ jsonGenerator.add = function (block) {
   return `{"type":"add", "values": [${values.join(',')}]}`;
 };
 
+jsonGenerator.make_array = function (block) {
+  const values = [];
+  block.getChildren(true).forEach((block) => {
+    values.push(this.fromBlock(block));
+  });
+  return `{"type":"make_array", "values": [${values.join(',')}]}`;
+};
+
 jsonGenerator.subtract = function (block) {
   const values = [];
   block.getChildren().forEach((block) => {
