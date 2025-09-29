@@ -11,7 +11,7 @@ export default {
     this.jsonInit({
       type: 'events_math',
       output: 'Number',
-      colour: 230,
+      colour: 65,
 
       message0: '%1 of %2 events\nthat match filters [...]',
       args0: [
@@ -30,7 +30,7 @@ export default {
           value: 'COUNT',
         },
 
-        // dropdown for event type
+        // event type to filter for
         {
           type: 'field_dropdown',
           name: 'EVENT_TYPE',
@@ -38,12 +38,7 @@ export default {
           value: 'PatientSatisfaction',
         },
 
-        // event filters - allow adding multiple event filters, similar to add / subtract blocks
-        //   {
-        //     type: 'input_value',
-        //     name: 'FILTER',
-        //     check: 'EventFilter',
-        //   },
+        // TODO: allow adding event filters here
       ],
     });
   },

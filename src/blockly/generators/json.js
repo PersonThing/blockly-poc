@@ -59,25 +59,6 @@ jsonGenerator.add = function (block) {
   return `{"type":"add", "values": [${values.join(',')}]}`;
 };
 
-jsonGenerator.array_math = function (block) {
-  const mathType = block.getFieldValue('MATH_TYPE');
-  const list = this.fromBlock(block.getInputTargetBlock('LIST'));
-  return `{"type":"array_math", "math_type":"${mathType}", "list":${list}}`;
-};
-
-jsonGenerator.events_math = function (block) {
-  const mathType = block.getFieldValue('MATH_TYPE');
-  const eventType = block.getFieldValue('EVENT_TYPE');
-  // TODO: filters
-  return `{"type":"events_math", "math_type":"${mathType}", "event_type":"${eventType}"}`;
-};
-
-jsonGenerator.most_recent_events = function (block) {
-  const age = Number(block.getFieldValue('AGE'));
-  const eventType = block.getFieldValue('EVENT_TYPE');
-  return `{"type":"most_recent_events", "age":"${age}", "event_type":"${eventType}"}`;
-};
-
 jsonGenerator.subtract = function (block) {
   const values = [];
   block.getChildren().forEach((block) => {
@@ -179,10 +160,36 @@ jsonGenerator.call_wte = function (block) {
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
 
-// wtes
-jsonGenerator.wte_constant = function (block) {
-  const value = block.getFieldValue('VALUE');
-  return `{"type":"wte_constant", "value": ${value}}`;
+jsonGenerator.array_math = function (block) {
+  const mathType = block.getFieldValue('MATH_TYPE');
+  const list = this.fromBlock(block.getInputTargetBlock('LIST'));
+  return `{"type":"array_math", "math_type":"${mathType}", "list":${list}}`;
 };
+
+jsonGenerator.events_math = function (block) {
+  const mathType = block.getFieldValue('MATH_TYPE');
+  const eventType = block.getFieldValue('EVENT_TYPE');
+  // TODO: filters
+  return `{"type":"events_math", "math_type":"${mathType}", "event_type":"${eventType}"}`;
+};
+
+jsonGenerator.most_recent_events = function (block) {
+  const age = Number(block.getFieldValue('AGE'));
+  const eventType = block.getFieldValue('EVENT_TYPE');
+  return `{"type":"most_recent_events", "age":"${age}", "event_type":"${eventType}"}`;
+};
+
+jsonGenerator.ratio = function (block) {
+  const numerator = this.fromBlock(block.getInputTargetBlock('NUMERATOR'));
+  const denominator = this.fromBlock(block.getInputTargetBlock('DENOMINATOR'));
+  return `{"type":"ratio", "numerator":${numerator}, "denominator":${denominator}}`;
+}
+
+jsonGenerator.ratio_condition_true = function (block) {
+  const z = this.fromBlock(block.getInputTargetBlock('Z'));
+  const conditionType = block.getFieldValue('CONDITION_TYPE');
+  const conditionValue = block.getFieldValue('CONDITION_VALUE');
+  return `{"type":"ratio_condition_true", "z":${z}, "condition_type":"${conditionType}", "condition_value":${conditionValue}}`;
+}
 
 export default jsonGenerator;

@@ -140,10 +140,24 @@ javascriptGenerator.forBlock['call_wte'] = function (block, generator) {
   return [`callWte('${name}', context)`, Order.NONE];
 };
 
-// WTEs
-javascriptGenerator.forBlock['wte_constant'] = function (block, generator) {
-  const value = block.getFieldValue('x');
-  return [`(${value})`, Order.NONE];
+javascriptGenerator.forBlock['ratio'] = function (block, generator) {
+  const numerator = generator.valueToCode(block, 'NUMERATOR', Order.NONE) || '0';
+  const denominator = generator.valueToCode(block, 'DENOMINATOR', Order.NONE) || '1';
+  return [`getRatio(${numerator}, ${denominator})`, Order.FUNCTION_CALL];
+};
+
+javascriptGenerator.forBlock['ratio_condition_true'] = function (block, generator) {
+  const z = generator.valueToCode(block, 'Z', Order.NONE) || '[]';
+
+  // TODO: handle multiple conditions
+  const conditions = [
+    {
+      type: block.getFieldValue('CONDITION_TYPE'),
+      value: block.getFieldValue('CONDITION_VALUE'),
+    },
+  ];
+
+  return [`getRatioConditionTrue(${z}, ${JSON.stringify(conditions)})`, Order.FUNCTION_CALL];
 };
 
 export default javascriptGenerator;

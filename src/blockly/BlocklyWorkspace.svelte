@@ -50,7 +50,7 @@
   import { onMount } from 'svelte';
   import * as Blockly from 'blockly';
   import { FieldDate } from '@blockly/field-date';
-  import './blocks/custom_blocks.js';
+  import './custom_blocks.js';
   import javascriptGenerator from './generators/javascript.js';
   import jsonGenerator from './generators/json';
   import { save, load } from './serialization.js';
@@ -205,6 +205,48 @@
         const date = new Date(frame.start).toISOString().split('T')[0];
         return logAndReturn(`recurrence_frame`, { date }, outputCallback(context));
       });
+    };
+
+    const getRatio = function (numerator, denominator) {
+      if (denominator === 0) return 0;
+      return numerator / denominator;
+    };
+
+    const getRatioConditionTrue = function (array, conditions) {
+      if (!Array.isArray(array) || array.length === 0) return 0;
+
+      const countTrue = array.reduce((acc, item) => {
+        let conditionMet = false;
+        for (const condition of conditions) {
+          const { type, value } = condition;
+          if (type) {
+            switch (type) {
+              case 'equals':
+                if (item === value) conditionMet = true;
+                break;
+              case 'not_equals':
+                if (item !== value) conditionMet = true;
+                break;
+              case 'greater_than':
+                if (item > value) conditionMet = true;
+                break;
+              case 'less_than':
+                if (item < value) conditionMet = true;
+                break;
+              case 'greater_than_or_equals':
+                if (item >= value) conditionMet = true;
+                break;
+              case 'lesser_than_or_equals':
+                if (item <= value) conditionMet = true;
+                break;
+            }
+          }
+        }
+        let result = acc + (conditionMet ? 1 : 0)
+        return logAndReturn(`condition_check:${item}:${conditionMet}`, { item, conditionMet, runningCount: result }, result);
+      }, 0);
+
+      return countTrue / array.length;
     };
 
     generatedJs = javascriptGenerator.workspaceToCode(ws);
