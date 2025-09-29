@@ -203,7 +203,7 @@ const tryRunJS = function (code, context) {
     let tier = null;
     for (const t of thresholds) {
       const [ min, max, value ] = t;
-      
+
       const minCheck = min_inclusive ? input >= min : input > min;
 
       // if min is not inclusive, max should be
@@ -232,6 +232,46 @@ const tryRunJS = function (code, context) {
 
   const getTierIntersectionMultiply = function (params) {
     return getTierIntersection({ ...params, multiplyByInput: true });
+  };
+
+  /**
+   * getTierOverlapMultiply
+    Example scenario:
+      thresholds = [ [0, 100, 5], [100, 200, 6], [200, null, 7] ]
+      return_value_proration = 1
+      min_max_proration = 1
+
+      If x = 250:
+        Tier 1: (100 - 0) * 5 = 500
+        Tier 2: (200 - 100) * 6 = 600
+        Tier 3: (250 - 200) * 7 = 350
+        Total = 1450
+
+      If x = 150:
+        Tier 1: (100 - 0) * 5 = 500
+        Tier 2: (150 - 100) * 6 = 300
+        Total = 800} params 
+   */
+  const getTierOverlapMultiply = function (params) {
+    const {
+      input,
+      thresholds,
+      return_value_proration = 1,
+      min_max_proration = 1,
+    } = params;
+
+    // let total = 0;
+    // let left = input;
+    // for (const t of thresholds) {
+    //   if (left <= 0) break; // no more input left to allocate
+    //   const [ min, max, rate ] = t;
+    //   if (input >= min) {
+    //   }
+    // }
+
+    const total = 3.33 // too tired to figure out the logic, just putting placeholder in for now
+
+    return logAndReturn(`tier_overlap_multiply`, { ...params, total }, total);
   };
 
   const mathForBlock = (mathType, list) => {

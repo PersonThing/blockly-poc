@@ -100,6 +100,11 @@ export const toolbox = {
 
         {
           kind: 'block',
+          type: 'tier_overlap_multiply',
+        },
+
+        {
+          kind: 'block',
           type: 'conditional_number',
         },
       ],

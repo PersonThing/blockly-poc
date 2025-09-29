@@ -218,4 +218,21 @@ javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, ge
   ];
 };
 
+javascriptGenerator.forBlock['tier_overlap_multiply'] = function (block, generator) {
+  const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
+  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
+  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
+  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
+  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  return [
+    `getTierOverlapMultiply({
+  input: ${input},
+  thresholds: ${JSON.stringify(thresholds)},
+  return_value_proration: ${returnValueProration},
+  min_max_proration: ${minMaxProration}
+})`,
+    Order.FUNCTION_CALL,
+  ];
+};
+
 export default javascriptGenerator;

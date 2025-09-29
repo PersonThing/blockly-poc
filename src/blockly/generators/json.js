@@ -232,4 +232,13 @@ jsonGenerator.tier_intersection_multiply = function (block) {
   return `{"type":"tier_intersection_multiply", "input":${input}, "thresholds":${JSON.stringify(thresholds)}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
 };
 
+jsonGenerator.tier_overlap_multiply = function (block) {
+  const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
+  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
+  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
+  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
+  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  return `{"type":"tier_overlap_multiply", "input":${input}, "thresholds":${JSON.stringify(thresholds)}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}}`;
+};
+
 export default jsonGenerator;

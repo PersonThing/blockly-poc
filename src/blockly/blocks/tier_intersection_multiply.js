@@ -19,7 +19,7 @@ export default {
     this.jsonInit({
       type: 'tier_intersection_multiply',
       message0:
-        `Tier intersection Multiply\nInput %1\nThresholds %2\nReturn Value Proration %3\nMin/Max Proration %4\nMin Inclusive %5`,
+        `Tier Intersection Multiply\nInput %1\nThresholds %2\nReturn Value Proration %3\nMin/Max Proration %4\nMin Inclusive %5`,
       args0: [
         {
           type: 'input_value',
