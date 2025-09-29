@@ -90,6 +90,16 @@ export const toolbox = {
 
         {
           kind: 'block',
+          type: 'tier_intersection',
+        },
+
+        {
+          kind: 'block',
+          type: 'tier_intersection_multiply',
+        },
+
+        {
+          kind: 'block',
           type: 'conditional_number',
         },
       ],

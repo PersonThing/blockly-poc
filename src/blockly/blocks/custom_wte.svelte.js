@@ -28,7 +28,6 @@ const call_wte = {
       ],
       colour: 300,
       tooltip: '',
-      helpUrl: '',
       // previousStatement: null,
       // nextStatement: null,
       output: 'Number',
@@ -66,7 +65,6 @@ const define_wte = {
       ],
       colour: 300,
       tooltip: '',
-      helpUrl: '',
     });
   },
 

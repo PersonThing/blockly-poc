@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly';
+import sample_tiers from '../mock_data/sample_tiers';
 
 const jsonGenerator = new Blockly.Generator('JSON');
 
@@ -210,6 +211,25 @@ jsonGenerator.target_achieved_excess = function (block) {
   const targetProration = this.fromBlock(block.getInputTargetBlock('TARGET_PRORATION'));
   const returnValueProration = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE_PRORATION'));
   return `{"type":"target_achieved_excess", "input":${input}, "target":${target}, "target_compare":"${targetCompare}", "return_value":${returnValue}, "target_proration":${targetProration}, "return_value_proration":${returnValueProration}}`;
+};
+
+jsonGenerator.tier_intersection = function (block) {
+  const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
+  const thresholds = JSON.stringify(sample_tiers.map((t) => [t.min, t.max, t.value]));
+  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
+  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  return `{"type":"tier_intersection", "input":${input}, "thresholds":${thresholds}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
+};
+
+jsonGenerator.tier_intersection_multiply = function (block) {
+  const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
+  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
+  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
+  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
+  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  return `{"type":"tier_intersection_multiply", "input":${input}, "thresholds":${JSON.stringify(thresholds)}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
 };
 
 export default jsonGenerator;

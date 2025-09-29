@@ -1,8 +1,10 @@
+import SampleSegments from '../mock_data/sample_segments.js';
+
 export default {
   init: function () {
     this.jsonInit({
       type: 'segment_frame',
-      message0: 'Segment Frame \nName %1 \nSegmentID %2 \nOutput %3',
+      message0: 'Segment Frame \nName %1 \nSegment %2 \nOutput %3',
       args0: [
         {
           type: 'field_input',
@@ -12,13 +14,8 @@ export default {
         {
           type: 'field_dropdown',
           name: 'SEGMENT_ID',
-          options: [
-            ['seg1 (1 participant)', '1'],
-            ['seg2 (2 participants)', '2'],
-            ['seg3 (3 participants)', '3'],
-            ['seg4 (4 participants)', '4'],
-            ['seg5 (10 participants)', '5'],
-          ],
+          options: Object.entries(SampleSegments)
+            .map(([key, segment]) => [`${key}: ${segment.length} participants`, key]),
           // default
           value: 2,
         },
@@ -30,7 +27,6 @@ export default {
       ],
       colour: 25,
       tooltip: '',
-      helpUrl: '',
       // previousStatement: null,
       // nextStatement: null,
       output: 'Array',

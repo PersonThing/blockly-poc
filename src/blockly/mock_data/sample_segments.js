@@ -1,4 +1,4 @@
-const SampleSegments = {
+export default {
   1: [{ id: 1, name: 'Alice', wrvu: 300, hours: 30 }],
   2: [
     { id: 2, name: 'Bob', wrvu: 200, hours: 20 },
@@ -28,4 +28,3 @@ const SampleSegments = {
     { id: 10, name: 'Judy', wrvu: 550, hours: 55 },
   ],
 };
-export default SampleSegments;

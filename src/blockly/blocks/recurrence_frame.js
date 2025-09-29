@@ -22,7 +22,6 @@ export default {
       ],
       colour: 10,
       tooltip: '',
-      helpUrl: '',
       // previousStatement: null,
       // nextStatement: null,
       output: 'Number',

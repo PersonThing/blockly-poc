@@ -39,7 +39,6 @@ export default {
       ],
       colour: 30,
       tooltip: '',
-      helpUrl: '',
       output: 'OFFSET',
     });
   },

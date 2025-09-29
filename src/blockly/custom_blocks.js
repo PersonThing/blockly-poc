@@ -51,3 +51,9 @@ Blockly.Blocks['target_achieved'] = target_achieved;
 
 import target_achieved_excess from "./blocks/target_achieved_excess.js";
 Blockly.Blocks['target_achieved_excess'] = target_achieved_excess;
+
+import tier_intersection from "./blocks/tier_intersection.js";
+Blockly.Blocks['tier_intersection'] = tier_intersection;
+
+import tier_intersection_multiply from "./blocks/tier_intersection_multiply.js";
+Blockly.Blocks['tier_intersection_multiply'] = tier_intersection_multiply;

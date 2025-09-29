@@ -39,7 +39,6 @@ export default {
       ],
       colour: 50,
       tooltip: '',
-      helpUrl: '',
       output: 'RECURRENCE',
     });
   },

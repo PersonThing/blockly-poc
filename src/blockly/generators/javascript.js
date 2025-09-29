@@ -1,4 +1,5 @@
 import { javascriptGenerator, Order } from 'blockly/javascript';
+import sample_tiers from '../mock_data/sample_tiers';
 
 javascriptGenerator.forBlock['context_variable'] = function (block, generator) {
   const variableName = block.getFieldValue('VARIABLE_NAME') || '';
@@ -35,46 +36,22 @@ javascriptGenerator.forBlock['make_array'] = function (block, generator) {
   return [`[${values.join(',')}]`, Order.NONE];
 };
 
-const mathForBlock = (mathType, list) => {
-  switch (mathType) {
-    case 'COUNT':
-      return [`${list}.length`, Order.FUNCTION_CALL];
-    case 'MAX':
-      return [`Math.max(...${list})`, Order.FUNCTION_CALL];
-    case 'MIN':
-      return [`Math.min(...${list})`, Order.FUNCTION_CALL];
-    case 'AVERAGE':
-      return [`(${list}.reduce((a, b) => a + b, 0)) / ${list}.length`, Order.FUNCTION_CALL];
-    case 'SUM':
-      return [`${list}.reduce((a, b) => a + b, 0)`, Order.FUNCTION_CALL];
-    case 'MULTIPLY':
-      return [`${list}.reduce((a, b) => a * b, 1)`, Order.FUNCTION_CALL];
-    default:
-      return [`null`, Order.NONE];
-  }
-};
-
 javascriptGenerator.forBlock['array_math'] = function (block, generator) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
-  return mathForBlock(mathType, list);
+  return [`arrayMath('${mathType}', ${list})`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['events_math'] = function (block, generator) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  const list = `sampleEvents.filter(e => e.type === '${eventType}').map(e => e.value)`;
-  return mathForBlock(mathType, list);
+  return [`eventsMath('${mathType}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['most_recent_events'] = function (block, generator) {
   const age = block.getFieldValue('AGE');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  const events = `sampleEvents.filter(e => e.type === '${eventType}').map(e => e.value)`;
-
-  // this assumes events are ordered from oldest to newest
-  const sliceCall = age === 'MOST RECENT' ? '.slice(-1)' : '.slice(0, 1)';
-  return [`${events}${sliceCall}[0]`, Order.NONE];
+  return [`mostRecentEvent('${age}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['conditional_number'] = function (block, generator) {
@@ -199,6 +176,43 @@ javascriptGenerator.forBlock['target_achieved_excess'] = function (block, genera
   return_value: ${returnValue},
   target_proration: ${targetProration},
   return_value_proration: ${returnValueProration}
+})`,
+    Order.FUNCTION_CALL,
+  ];
+};
+
+javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) {
+  const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
+  const thresholds = JSON.stringify(sample_tiers.map((t) => [t.min, t.max, t.value]));
+  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
+  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  return [
+    `getTierIntersection({
+  input: ${input},
+  thresholds: ${thresholds},
+  return_value_proration: ${returnValueProration},
+  min_max_proration: ${minMaxProration},
+  min_inclusive: ${minInclusive}
+})`,
+    Order.FUNCTION_CALL,
+  ];
+};
+
+javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, generator) {
+  const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
+  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
+  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
+  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
+  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  return [
+    `getTierIntersectionMultiply({
+  input: ${input},
+  thresholds: ${JSON.stringify(thresholds)},
+  return_value_proration: ${returnValueProration},
+  min_max_proration: ${minMaxProration},
+  min_inclusive: ${minInclusive}
 })`,
     Order.FUNCTION_CALL,
   ];

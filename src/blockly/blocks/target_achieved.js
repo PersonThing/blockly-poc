@@ -32,9 +32,9 @@ export default {
           check: 'Number',
         },
         {
-          type: 'input_value',
+          type: 'field_number',
           name: 'TARGET',
-          check: 'Number',
+          value: 0,
         },
         {
           type: 'field_dropdown',
@@ -43,24 +43,23 @@ export default {
           value: 'EQUALS',
         },
         {
-          type: 'input_value',
+          type: 'field_number',
           name: 'RETURN_VALUE',
-          check: 'Number',
+          value: 100,
         },
         {
-          type: 'input_value',
+          type: 'field_number',
           name: 'TARGET_PRORATION',
-          check: 'Number',
+          value: 1,
         },
         {
-          type: 'input_value',
+          type: 'field_number',
           name: 'RETURN_VALUE_PRORATION',
-          check: 'Number',
+          value: 1,
         },
       ],
       colour: 50,
       tooltip: '',
-      helpUrl: '',
       output: 'Number',
     });
   },
