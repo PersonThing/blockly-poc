@@ -33,19 +33,33 @@ export const toolbox = {
     {
       kind: 'category',
       name: 'System WTEs',
-      categorystyle: 'procedure_category',
-      contents: [
-      ]
-    },
-    {
-      kind: 'category',
-      name: 'Building blocks',
       categorystyle: 'logic_category',
       contents: [
         {
           kind: "block",
           type: "context_variable",
         },
+        
+        // arrays
+        {
+          kind: "block",
+          type: "make_array",
+        },
+        {
+          kind: "block",
+          type: "array_math",
+        },
+
+        // events
+        {
+          kind: "block",
+          type: "events_math",
+        },
+        {
+          kind: "block",
+          type: "most_recent_events",
+        },
+        
         {
           kind: "block",
           type: "add",
@@ -54,18 +68,45 @@ export const toolbox = {
           kind: "block",
           type: "subtract",
         },
-        {
-          kind: "block",
-          type: "make_array",
-        },
+        
         {
           kind: "block",
           type: "conditional_number",
         },
-        // {
-        //   kind: "block",
-        //   type: "controls_if",
-        // },
+      ]
+    },
+    
+    {
+      kind: "category",
+      name: "Frames",
+      categorystyle: "text_category",
+      contents: [
+        {
+          kind: "block",
+          type: "segment_frame",
+        },
+        {
+          kind: "block",
+          type: "recurrence_frame",
+        },
+        {
+          kind: "block",
+          type: "recurrence",
+        },
+        {
+          kind: "block",
+          type: "offset",
+        },
+      ],
+    },
+
+    {
+      kind: "category",
+      name: "Blockly built-in",
+      categorystyle: "logic_category",
+      contents: [
+
+        // basics + built-in stuff
         {
           kind: "block",
           type: "logic_compare",
@@ -288,29 +329,6 @@ export const toolbox = {
               },
             },
           },
-        },
-      ],
-    },
-    {
-      kind: "category",
-      name: "Frames",
-      categorystyle: "text_category",
-      contents: [
-        {
-          kind: "block",
-          type: "segment_frame",
-        },
-        {
-          kind: "block",
-          type: "recurrence_frame",
-        },
-        {
-          kind: "block",
-          type: "recurrence",
-        },
-        {
-          kind: "block",
-          type: "offset",
         },
       ],
     },

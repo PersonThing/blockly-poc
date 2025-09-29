@@ -59,12 +59,23 @@ jsonGenerator.add = function (block) {
   return `{"type":"add", "values": [${values.join(',')}]}`;
 };
 
-jsonGenerator.make_array = function (block) {
-  const values = [];
-  block.getChildren(true).forEach((block) => {
-    values.push(this.fromBlock(block));
-  });
-  return `{"type":"make_array", "values": [${values.join(',')}]}`;
+jsonGenerator.array_math = function (block) {
+  const mathType = block.getFieldValue('MATH_TYPE');
+  const list = this.fromBlock(block.getInputTargetBlock('LIST'));
+  return `{"type":"array_math", "math_type":"${mathType}", "list":${list}}`;
+};
+
+jsonGenerator.events_math = function (block) {
+  const mathType = block.getFieldValue('MATH_TYPE');
+  const eventType = block.getFieldValue('EVENT_TYPE');
+  // TODO: filters
+  return `{"type":"events_math", "math_type":"${mathType}", "event_type":"${eventType}"}`;
+};
+
+jsonGenerator.most_recent_events = function (block) {
+  const age = Number(block.getFieldValue('AGE'));
+  const eventType = block.getFieldValue('EVENT_TYPE');
+  return `{"type":"most_recent_events", "age":"${age}", "event_type":"${eventType}"}`;
 };
 
 jsonGenerator.subtract = function (block) {

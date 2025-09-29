@@ -1,5 +1,25 @@
 <div id="pageContainer">
-  <div id="blocklyContainer" bind:this={blocklyContainer}></div>
+  <div id="contentPane">
+    <div id="tabs">
+      <button onclick={() => (tab = 'blockly')} class:active={tab === 'blockly'}
+        >Visual Editor</button
+      >
+      <button onclick={() => (tab = 'json')} class:active={tab === 'json'}>JSON</button>
+      <button onclick={() => (tab = 'js')} class:active={tab === 'js'}>JS</button>
+    </div>
+
+    <div
+      id="blocklyContainer"
+      bind:this={blocklyContainer}
+      style={{ display: tab === 'blockly' ? 'block' : 'none' }}
+    ></div>
+
+    {#if tab === 'json'}
+      <pre id="generatedCode">{generatedJson}</pre>
+    {:else if tab === 'js'}
+      <pre id="generatedCode">{generatedJs}</pre>
+    {/if}
+  </div>
   <div id="inputOutputPane">
     <div id="input">
       <h2>Input</h2>
@@ -23,13 +43,6 @@
         </div>
       {/each}
     </div>
-    <div id="generatedCode">
-      <div>
-        <button onclick={() => (showJs = false)} class:active={!showJs}>JSON</button>
-        <button onclick={() => (showJs = true)} class:active={showJs}>JS</button>
-      </div>
-      <pre>{showJs ? generatedJs : generatedJson}</pre>
-    </div>
   </div>
 </div>
 
@@ -43,6 +56,8 @@
   import { save, load } from './serialization.js';
   import { toolbox } from './toolbox.js';
   import './BlocklyWorkspace.svelte.css';
+  import { SampleEvents, DistinctEventTypes } from './mock_data/sample_events.js';
+  import SampleSegments from './mock_data/sample_segments.js';
 
   let blocklyContainer;
   let generatedJs = $state('');
@@ -56,40 +71,7 @@
     hour_bonus_threshold: 20,
   });
 
-  let showJs = $state(false);
-
-  // sample segments - id of segment is same as # of participants in segment
-  const sampleSegments = {
-    1: [{ id: 1, name: 'Alice', wrvu: 300, hours: 30 }],
-    2: [
-      { id: 2, name: 'Bob', wrvu: 200, hours: 20 },
-      { id: 3, name: 'Charlie', wrvu: 100, hours: 10 },
-    ],
-    3: [
-      { id: 1, name: 'Alice', wrvu: 300, hours: 30 },
-      { id: 2, name: 'Bob', wrvu: 200, hours: 20 },
-      { id: 3, name: 'Charlie', wrvu: 100, hours: 10 },
-    ],
-    4: [
-      { id: 4, name: 'David', wrvu: 400, hours: 40 },
-      { id: 5, name: 'Eve', wrvu: 250, hours: 25 },
-      { id: 6, name: 'Frank', wrvu: 150, hours: 15 },
-      { id: 7, name: 'Grace', wrvu: 50, hours: 5 },
-    ],
-    5: [
-      { id: 1, name: 'Alice', wrvu: 300, hours: 30 },
-      { id: 2, name: 'Bob', wrvu: 200, hours: 20 },
-      { id: 3, name: 'Charlie', wrvu: 100, hours: 10 },
-      { id: 4, name: 'David', wrvu: 400, hours: 40 },
-      { id: 5, name: 'Eve', wrvu: 250, hours: 25 },
-      { id: 6, name: 'Frank', wrvu: 150, hours: 15 },
-      { id: 7, name: 'Grace', wrvu: 50, hours: 5 },
-      { id: 8, name: 'Heidi', wrvu: 350, hours: 35 },
-      { id: 9, name: 'Ivan', wrvu: 450, hours: 45 },
-      { id: 10, name: 'Judy', wrvu: 550, hours: 55 },
-    ],
-  };
-
+  let tab = $state('blockly');
   let ws;
 
   onMount(() => {
@@ -145,9 +127,13 @@
       return logAndReturn('wte_error', { name }, `No WTE defined with name ${name}`, null);
     };
 
+    // sampleEvents and segments - only referenced here to make explicitly available to eval()
+    const sampleEvents = SampleEvents;
+    const sampleSegments = SampleSegments;
+
     const executionLogs = [];
-    const flatten = (val) =>
-      Array.isArray(val) ? val.reduce((acc, v) => acc + flatten(v), 0) : val;
+    // const flatten = (val) =>
+    //   Array.isArray(val) ? val.reduce((acc, v) => acc + flatten(v), 0) : val;
 
     const logAndReturn = (label, meta, result) => {
       executionLogs.push({ label, meta, result });
