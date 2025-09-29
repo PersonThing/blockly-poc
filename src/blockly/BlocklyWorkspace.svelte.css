@@ -73,15 +73,16 @@ pre {
   position: relative;
 }
 #output .logEntry .logMeta {
-  background: rgba(255, 255, 255, 0.75);
+  background: #eee;
   border: 1px solid #ccc;
   display: none;
   left: 0;
   padding: 10px;
   position: absolute;
-  top: 0;
+  top: 50px;
   width: 300px;
   z-index: 10;
+  text-align: left;
 }
 #output .logEntry:hover .logMeta {
   display: block;

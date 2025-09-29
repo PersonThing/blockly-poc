@@ -34,7 +34,7 @@ export default {
         {
           type: 'field_dropdown',
           name: 'EVENT_TYPE',
-          options: DistinctEventTypes.map(type => [type, type]),
+          options: DistinctEventTypes.map((type) => [type, type]),
           value: 'PatientSatisfaction',
         },
 

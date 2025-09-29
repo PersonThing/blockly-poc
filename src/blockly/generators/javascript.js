@@ -160,4 +160,48 @@ javascriptGenerator.forBlock['ratio_condition_true'] = function (block, generato
   return [`getRatioConditionTrue(${z}, ${JSON.stringify(conditions)})`, Order.FUNCTION_CALL];
 };
 
+javascriptGenerator.forBlock['target_achieved'] = function (block, generator) {
+  const input = generator.valueToCode(block, 'INPUT', Order.NONE) || 'null';
+  const target = generator.valueToCode(block, 'TARGET', Order.NONE) || 'null';
+  const targetCompare = block.getFieldValue('TARGET_COMPARE');
+  const returnValue = generator.valueToCode(block, 'RETURN_VALUE', Order.NONE) || 'null';
+  const targetProration = generator.valueToCode(block, 'TARGET_PRORATION', Order.NONE) || 'null';
+  const returnValueProration =
+    generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || 'null';
+
+  return [
+    `getTargetAchieved({
+  input: ${input},
+  target: ${target},
+  target_compare: '${targetCompare}',
+  return_value: ${returnValue},
+  target_proration: ${targetProration},
+  return_value_proration: ${returnValueProration}
+})`,
+    Order.FUNCTION_CALL,
+  ];
+};
+
+javascriptGenerator.forBlock['target_achieved_excess'] = function (block, generator) {
+  const input = generator.valueToCode(block, 'INPUT', Order.NONE) || 'null';
+  const target = generator.valueToCode(block, 'TARGET', Order.NONE) || 'null';
+  const targetCompare = block.getFieldValue('TARGET_COMPARE');
+  const returnValue = generator.valueToCode(block, 'RETURN_VALUE', Order.NONE) || 'null';
+  const targetProration = generator.valueToCode(block, 'TARGET_PRORATION', Order.NONE) || 'null';
+  const returnValueProration =
+    generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || 'null';
+
+  return [
+    `getTargetAchievedExcess({
+  input: ${input},
+  target: ${target},
+  target_compare: '${targetCompare}',
+  return_value: ${returnValue},
+  target_proration: ${targetProration},
+  return_value_proration: ${returnValueProration}
+})`,
+    Order.FUNCTION_CALL,
+  ];
+};
+
 export default javascriptGenerator;

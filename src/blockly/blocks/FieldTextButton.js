@@ -3,7 +3,7 @@
 // docs/example for extending a Blockly Field type:
 // https://developers.google.com/blockly/guides/create-custom-blocks/fields/customizing-fields/extending
 
-import * as Blockly from "blockly/core";
+import * as Blockly from 'blockly/core';
 
 export class FieldTextButton extends Blockly.Field {
   constructor(buttontext, changeHandler) {
@@ -18,7 +18,7 @@ export class FieldTextButton extends Blockly.Field {
   }
 
   // The mouse cursor style when over the hotspot that initiates the editor.
-  CURSOR = "default";
+  CURSOR = 'default';
 
   showEditor_() {
     if (this.changeHandler_) {
@@ -27,4 +27,4 @@ export class FieldTextButton extends Blockly.Field {
   }
 }
 
-Blockly.fieldRegistry.register("field_textbutton", FieldTextButton);
+Blockly.fieldRegistry.register('field_textbutton', FieldTextButton);

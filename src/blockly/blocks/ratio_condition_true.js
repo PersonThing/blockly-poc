@@ -16,6 +16,8 @@
     Context: count_matching, total_count, null_found flag
 */
 
+import compare_options from '../mock_data/compare_options';
+
 export default {
   init: function () {
     this.jsonInit({
@@ -32,21 +34,14 @@ export default {
         {
           type: 'field_dropdown',
           name: 'CONDITION_TYPE',
-          options: [
-            ['greater_than', 'greater_than'],
-            ['greater_than_or_equals', 'greater_than_or_equals'],
-            ['lesser_than', 'lesser_than'],
-            ['lesser_than_or_equals', 'lesser_than_or_equals'],
-            ['equals', 'equals'],
-            ['not_equals', 'not_equals'],
-          ],
-          value: 'TRUE',
+          options: compare_options.map((option) => [option, option]),
+          value: 'EQUALS',
         },
         {
           type: 'field_number',
           name: 'CONDITION_VALUE',
           value: 0,
-        }
+        },
       ],
       output: 'Number',
       colour: 230,

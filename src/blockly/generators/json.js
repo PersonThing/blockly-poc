@@ -183,13 +183,33 @@ jsonGenerator.ratio = function (block) {
   const numerator = this.fromBlock(block.getInputTargetBlock('NUMERATOR'));
   const denominator = this.fromBlock(block.getInputTargetBlock('DENOMINATOR'));
   return `{"type":"ratio", "numerator":${numerator}, "denominator":${denominator}}`;
-}
+};
 
 jsonGenerator.ratio_condition_true = function (block) {
   const z = this.fromBlock(block.getInputTargetBlock('Z'));
   const conditionType = block.getFieldValue('CONDITION_TYPE');
   const conditionValue = block.getFieldValue('CONDITION_VALUE');
   return `{"type":"ratio_condition_true", "z":${z}, "condition_type":"${conditionType}", "condition_value":${conditionValue}}`;
-}
+};
+
+jsonGenerator.target_achieved = function (block) {
+  const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
+  const target = this.fromBlock(block.getInputTargetBlock('TARGET'));
+  const targetCompare = block.getFieldValue('TARGET_COMPARE');
+  const returnValue = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE'));
+  const targetProration = this.fromBlock(block.getInputTargetBlock('TARGET_PRORATION'));
+  const returnValueProration = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE_PRORATION'));
+  return `{"type":"target_achieved", "input":${input}, "target":${target}, "target_compare":"${targetCompare}", "return_value":${returnValue}, "target_proration":${targetProration}, "return_value_proration":${returnValueProration}}`;
+};
+
+jsonGenerator.target_achieved_excess = function (block) {
+  const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
+  const target = this.fromBlock(block.getInputTargetBlock('TARGET'));
+  const targetCompare = block.getFieldValue('TARGET_COMPARE');
+  const returnValue = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE'));
+  const targetProration = this.fromBlock(block.getInputTargetBlock('TARGET_PRORATION'));
+  const returnValueProration = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE_PRORATION'));
+  return `{"type":"target_achieved_excess", "input":${input}, "target":${target}, "target_compare":"${targetCompare}", "return_value":${returnValue}, "target_proration":${targetProration}, "return_value_proration":${returnValueProration}}`;
+};
 
 export default jsonGenerator;

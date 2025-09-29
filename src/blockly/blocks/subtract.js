@@ -1,19 +1,19 @@
-import { FieldTextButton } from "./FieldTextButton.js";
+import { FieldTextButton } from './FieldTextButton.js';
 
 export default {
   length: 0,
   init: function () {
     this.jsonInit({
-      type: "subtract",
-      output: "Number",
+      type: 'subtract',
+      output: 'Number',
       colour: 0,
     });
 
     // add a button to add more inputs
-    this.appendDummyInput("values")
-      .appendField("-")
+    this.appendDummyInput('values')
+      .appendField('-')
       .appendField(
-        new FieldTextButton("+", () => {
+        new FieldTextButton('+', () => {
           this.addInput();
         })
       );
@@ -24,17 +24,17 @@ export default {
     const inputName = `value_${lastIndex}`;
 
     // add a new value input
-    const appendedInput = this.appendValueInput(inputName).setCheck("Number");
+    const appendedInput = this.appendValueInput(inputName).setCheck('Number');
 
     // add a button to remove this input
     appendedInput.appendField(
-      new FieldTextButton("-", () => {
+      new FieldTextButton('-', () => {
         this.removeInput(inputName);
         this.length--;
       })
     );
   },
-  
+
   saveExtraState: function () {
     return {
       length: this.length,

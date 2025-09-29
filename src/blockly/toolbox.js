@@ -80,6 +80,16 @@ export const toolbox = {
 
         {
           kind: 'block',
+          type: 'target_achieved',
+        },
+
+        {
+          kind: 'block',
+          type: 'target_achieved_excess',
+        },
+
+        {
+          kind: 'block',
           type: 'conditional_number',
         },
       ],

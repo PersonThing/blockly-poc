@@ -5,10 +5,10 @@ const getWTEOptions = () => {
   if (Object.keys(wteNames).length === 0) {
     return [['<none>', '']];
   }
-  return Object.values(wteNames).map(name => [name, name]);
+  return Object.values(wteNames).map((name) => [name, name]);
 };
 
-const callWTE = {
+const call_wte = {
   init: function () {
     this.jsonInit({
       type: 'call_wte',
@@ -46,7 +46,7 @@ const callWTE = {
   },
 };
 
-const defineWTE = {
+const define_wte = {
   // generate an id based on timestamp
   init: function () {
     this.jsonInit({
@@ -77,4 +77,4 @@ const defineWTE = {
   },
 };
 
-export { defineWTE, callWTE, wteNames };
+export { define_wte, call_wte, wteNames };

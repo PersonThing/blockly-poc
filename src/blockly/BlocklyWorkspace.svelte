@@ -212,6 +212,26 @@
       return numerator / denominator;
     };
 
+    const isConditionMet = function (item, type, value) {
+      switch (type) {
+        case 'equals':
+          return item === value;
+        case 'not_equals':
+          return item !== value;
+        case 'greater_than':
+          return item > value;
+        case 'less_than':
+          return item < value;
+        case 'greater_than_or_equals':
+          return item >= value;
+        case 'lesser_than_or_equals':
+          return item <= value;
+        default:
+          console.error(`Unknown condition type: ${type}`);
+          return false;
+      }
+    };
+
     const getRatioConditionTrue = function (array, conditions) {
       if (!Array.isArray(array) || array.length === 0) return 0;
 
@@ -220,33 +240,68 @@
         for (const condition of conditions) {
           const { type, value } = condition;
           if (type) {
-            switch (type) {
-              case 'equals':
-                if (item === value) conditionMet = true;
-                break;
-              case 'not_equals':
-                if (item !== value) conditionMet = true;
-                break;
-              case 'greater_than':
-                if (item > value) conditionMet = true;
-                break;
-              case 'less_than':
-                if (item < value) conditionMet = true;
-                break;
-              case 'greater_than_or_equals':
-                if (item >= value) conditionMet = true;
-                break;
-              case 'lesser_than_or_equals':
-                if (item <= value) conditionMet = true;
-                break;
-            }
+            conditionMet = isConditionMet(item, type, value);
           }
         }
-        let result = acc + (conditionMet ? 1 : 0)
-        return logAndReturn(`condition_check:${item}:${conditionMet}`, { item, conditionMet, runningCount: result }, result);
+        return acc + (conditionMet ? 1 : 0);
       }, 0);
 
-      return countTrue / array.length;
+      return logAndReturn(
+        `ratio_condition_true:${countTrue}/${array.length}`,
+        { array, conditions },
+        countTrue / array.length
+      );
+    };
+
+    const getTargetAchieved = function (params) {
+      const {
+        input,
+        target,
+        target_compare,
+        return_value,
+        target_proration = 1,
+        return_value_proration = 1,
+      } = params;
+      let adjustedTarget = target * target_proration;
+      let achieved = isConditionMet(input, target_compare, adjustedTarget);
+      let adjustedReturnValue = return_value * return_value_proration;
+      return logAndReturn(
+        `target_achieved:${achieved}`,
+        { input, adjustedTarget },
+        achieved ? adjustedReturnValue : 0
+      );
+    };
+
+    const getTargetAchievedExcess = function (params) {
+      const {
+        input,
+        target,
+        target_compare,
+        return_value,
+        target_proration = 1,
+        return_value_proration = 1,
+      } = params;
+      let adjustedTarget = target * target_proration;
+      let achieved = isConditionMet(input, target_compare, adjustedTarget);
+      if (!achieved) {
+        return logAndReturn(`target_achieved_excess:false`, { ...params, adjustedTarget }, 0);
+      }
+      // TODO: does backend handle cases of less than ? eg, 50 < 100.. excess should be 50?
+      // using Math.abs() for now in case we should
+      let excess = Math.abs(input - adjustedTarget);
+      let excessValue = excess * return_value;
+      let adjustedReturnValue = excessValue * return_value_proration;
+      return logAndReturn(
+        `target_achieved_excess:true`,
+        {
+          ...params,
+          adjustedTarget,
+          excess,
+          excessValue,
+          adjustedReturnValue,
+        },
+        adjustedReturnValue
+      );
     };
 
     generatedJs = javascriptGenerator.workspaceToCode(ws);
