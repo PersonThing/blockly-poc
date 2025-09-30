@@ -12,7 +12,7 @@ const call_wte = {
   init: function () {
     this.jsonInit({
       type: 'call_wte',
-      message0: 'Call Custom WTE: %1\n(allow passing context overrides?)',
+      message0: 'Call Custom WTE: %1',
       args0: [
         {
           type: 'field_dropdown',

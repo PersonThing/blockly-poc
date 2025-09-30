@@ -326,4 +326,13 @@ const wtes = {
     },
 };
 
+/*
+dummy calls to make sure tree-shaking doesn't happen
+*/
+wtes.context_variable({}, 'testVar');
+wtes.define_wte('test', (context) => 42);
+wtes.call_wte('test', {});
+delete wtes.wteDefinitions['test'];
+
+
 export default wtes;

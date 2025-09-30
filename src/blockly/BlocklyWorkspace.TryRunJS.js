@@ -5,6 +5,7 @@ import wtes from './wtes.js';
 
 const tryRunJS = function (code, context) {
   wtes.logs = [];
+  console.log(context); // to avoid tree-shaking
 
   try {
     eval(code);
