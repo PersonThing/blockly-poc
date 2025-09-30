@@ -1,9 +1,12 @@
 import { javascriptGenerator, Order } from 'blockly/javascript';
 import sample_tiers from '../mock_data/sample_tiers';
 
+// for simplicity, this generator should only handle values out of field values / inputs / child blocks / etc
+// and then calling a helper function in wtes.<block_name> passing said values
+
 javascriptGenerator.forBlock['context_variable'] = function (block, generator) {
   const variableName = block.getFieldValue('VARIABLE_NAME') || '';
-  return [`context['${variableName}']`, Order.NONE];
+  return [`wtes.context_variable(context, '${variableName}')`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['add'] = function (block, generator) {
@@ -39,19 +42,19 @@ javascriptGenerator.forBlock['make_array'] = function (block, generator) {
 javascriptGenerator.forBlock['array_math'] = function (block, generator) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
-  return [`arrayMath('${mathType}', ${list})`, Order.FUNCTION_CALL];
+  return [`wtes.array_math('${mathType}', ${list})`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['events_math'] = function (block, generator) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  return [`eventsMath('${mathType}', '${eventType}')`, Order.FUNCTION_CALL];
+  return [`wtes.events_math('${mathType}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['most_recent_events'] = function (block, generator) {
   const age = block.getFieldValue('AGE');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  return [`mostRecentEvent('${age}', '${eventType}')`, Order.FUNCTION_CALL];
+  return [`wtes.most_recent_events('${age}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['conditional_number'] = function (block, generator) {
@@ -94,7 +97,7 @@ javascriptGenerator.forBlock['recurrence_frame'] = function (block, generator) {
   const offset = generator.valueToCode(block, 'OFFSET', Order.NONE) || 'null';
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
 
-  return [`executeRecurrenceFrame(${recurrence}, ${offset}, (context) => ${output})`, Order.NONE];
+  return [`wtes.recurrence_frame(context, ${recurrence}, ${offset}, (context) => ${output})`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
@@ -103,24 +106,24 @@ javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
   let segmentId = block.getFieldValue('SEGMENT_ID');
   segmentId = segmentId ? segmentId : 'null';
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
-  return [`executeSegmentFrame(${name}, ${segmentId}, (context) => ${output})`, Order.NONE];
+  return [`wtes.segment_frame(context, ${name}, ${segmentId}, (context) => ${output})`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['define_wte'] = function (block, generator) {
   const name = block.getFieldValue('NAME');
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
-  return `defineWte('${name}', context => ${output});`;
+  return `wtes.define_wte('${name}', context => ${output});`;
 };
 
 javascriptGenerator.forBlock['call_wte'] = function (block, generator) {
   const name = block.getFieldValue('NAME');
-  return [`callWte('${name}', context)`, Order.NONE];
+  return [`wtes.call_wte('${name}', context)`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['ratio'] = function (block, generator) {
   const numerator = generator.valueToCode(block, 'NUMERATOR', Order.NONE) || '0';
   const denominator = generator.valueToCode(block, 'DENOMINATOR', Order.NONE) || '1';
-  return [`getRatio(${numerator}, ${denominator})`, Order.FUNCTION_CALL];
+  return [`wtes.ratio(${numerator}, ${denominator})`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['ratio_condition_true'] = function (block, generator) {
@@ -134,7 +137,7 @@ javascriptGenerator.forBlock['ratio_condition_true'] = function (block, generato
     },
   ];
 
-  return [`getRatioConditionTrue(${z}, ${JSON.stringify(conditions)})`, Order.FUNCTION_CALL];
+  return [`wtes.ratio_condition_true(${z}, ${JSON.stringify(conditions)})`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock['target_achieved'] = function (block, generator) {
@@ -147,7 +150,7 @@ javascriptGenerator.forBlock['target_achieved'] = function (block, generator) {
     generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || 'null';
 
   return [
-    `getTargetAchieved({
+    `wtes.target_achieved({
   input: ${input},
   target: ${target},
   target_compare: '${targetCompare}',
@@ -169,7 +172,7 @@ javascriptGenerator.forBlock['target_achieved_excess'] = function (block, genera
     generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || 'null';
 
   return [
-    `getTargetAchievedExcess({
+    `wtes.target_achieved_excess({
   input: ${input},
   target: ${target},
   target_compare: '${targetCompare}',
@@ -188,7 +191,7 @@ javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) 
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
   return [
-    `getTierIntersection({
+    `wtes.tier_intersection({
   input: ${input},
   thresholds: ${thresholds},
   return_value_proration: ${returnValueProration},
@@ -207,7 +210,7 @@ javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, ge
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
   return [
-    `getTierIntersectionMultiply({
+    `wtes.tier_intersection_multiply({
   input: ${input},
   thresholds: ${JSON.stringify(thresholds)},
   return_value_proration: ${returnValueProration},
@@ -225,7 +228,7 @@ javascriptGenerator.forBlock['tier_overlap_multiply'] = function (block, generat
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   return [
-    `getTierOverlapMultiply({
+    `wtes.tier_overlap_multiply({
   input: ${input},
   thresholds: ${JSON.stringify(thresholds)},
   return_value_proration: ${returnValueProration},

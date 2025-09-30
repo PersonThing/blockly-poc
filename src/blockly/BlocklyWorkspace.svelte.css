@@ -34,13 +34,11 @@ pre {
   flex-direction: column;
   width: 400px;
   flex: 0 0 400px;
-  overflow: auto;
   margin: 0;
   font-size: 12px;
 }
 
 #input, #output {
-  overflow: auto;
   padding: 5px;
 }
 
@@ -79,7 +77,8 @@ pre {
   left: 0;
   padding: 10px;
   position: absolute;
-  top: 50px;
+  top: 20px;
+  left: 0;
   width: 300px;
   z-index: 10;
   text-align: left;
