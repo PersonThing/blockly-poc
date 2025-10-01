@@ -101,6 +101,16 @@ ${code}`);
     return wtes.logAndReturn(`wte_error:${name}`, { name }, 'wte not defined');
   },
 
+  add: (...params) => {
+    const result = params.reduce((a, b) => a + b, 0);
+    return wtes.logAndReturn(`add`, { params }, result);
+  },
+
+  subtract: (...params) => {
+    const result = params.reduce((a, b) => a - b);
+    return wtes.logAndReturn(`subtract`, { params }, result);
+  },
+
   // execute a segment frame, calling outputCallback for each participant in the segment
   // outputCallback is expected to return a value for that participant
   // returns an array of results, one per participant

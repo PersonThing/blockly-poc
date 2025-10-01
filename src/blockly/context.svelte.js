@@ -1,7 +1,7 @@
-// TODO: get this sync'ed to local storage
+import { persistentState } from "./persistent-state.svelte.js";
 
-const context = $state({
-  // default context... UI allows editing / adding to it
+export const context = persistentState("context_variables", {
+  // default context variables... UI allows editing / adding to it
   base_pay: 150000,
   clinical_fte: 0.1,
   hour_bonus_threshold: 20,

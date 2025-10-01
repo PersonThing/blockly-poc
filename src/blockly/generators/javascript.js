@@ -27,7 +27,7 @@ javascriptGenerator.forBlock['add'] = function (block, generator) {
     const value = generator.valueToCode(block, inputName, 0) || 'null';
     values.push(value);
   }
-  return [`${values.flatMap((v) => v).join(' + ')}`, Order.ADDITION];
+  return [`wtes.add(${values.flatMap((v) => v).join(', ')})`, Order.ADDITION];
 };
 
 javascriptGenerator.forBlock['subtract'] = function (block, generator) {
@@ -37,7 +37,7 @@ javascriptGenerator.forBlock['subtract'] = function (block, generator) {
     const value = generator.valueToCode(block, inputName, 0) || 'null';
     values.push(value);
   }
-  return [`${values.flatMap((v) => v).join(' - ')}`, Order.SUBTRACTION];
+  return [`wtes.subtract(${values.flatMap((v) => v).join(', ')})`, Order.SUBTRACTION];
 };
 
 javascriptGenerator.forBlock['make_array'] = function (block, generator) {
