@@ -23,17 +23,22 @@
   <div id="inputOutputPane">
     <div id="input">
       <h2>Input</h2>
-      {#each Object.keys(context) as key}
-        <div class="inputItem">
-          <label for={key}>{key}:</label>
-          <input type="number" id={key} name={key} bind:value={context[key]} onkeyup={runCode} />
-          <br />
-        </div>
-      {/each}
+      <BlocklyWorkspaceContext {runCode} />
     </div>
     <div id="output">
+      <button onclick={toggleBlockTypeFilters} style="float: right;"> Log filters </button>
       <h2>Output</h2>
-      {#each outputLogs as log}
+
+      <div class="blockTypeFilters" style="display: {showBlockTypeFilters ? 'block' : 'none'}">
+        {#each blockTypes as blockType}
+          <label>
+            <input type="checkbox" bind:group={selectedBlockTypes} value={blockType} />
+            {blockType}
+          </label>
+        {/each}
+      </div>
+
+      {#each filteredOutputLogs as log}
         <div class="logEntry">
           <pre>{JSON.stringify(log.result, null, 2)}</pre>
           <label>{log.label}</label>
@@ -56,22 +61,42 @@
   import { save, load } from './serialization.js';
   import { toolbox } from './toolbox.js';
   import './BlocklyWorkspace.svelte.css';
-  import { tryRunJS } from './BlocklyWorkspace.TryRunJS.js';
+  import wtes from './wtes.js';
+  import BlocklyWorkspaceContext from './BlocklyWorkspace.Context.svelte';
+  import context from './context.svelte.js';
 
   let blocklyContainer;
   let generatedJs = $state('');
   let generatedJson = $state('');
   let outputLogs = $state([]);
-  let context = $state({
-    base_pay: 150000,
-    wrvu: 400,
-    wrvu_bonus_threshold: 200,
-    hours: 40,
-    hour_bonus_threshold: 20,
-  });
 
   let tab = $state('blockly');
   let ws;
+
+  // all the custom block types - probably a simpler way to filter out built-in blocks
+  let blockTypes = $state(
+    Object.keys(Blockly.Blocks)
+      .filter(
+        (key) =>
+          !key.startsWith('text_') &&
+          !key.startsWith('math_') &&
+          !key.startsWith('logic_') &&
+          !key.startsWith('controls_') &&
+          !key.startsWith('lists_') &&
+          !key.startsWith('procedures_') &&
+          !key.startsWith('variables')
+      )
+      .sort()
+  );
+
+  let selectedBlockTypes = $state([...blockTypes]);
+
+  let filteredOutputLogs = $derived(
+    outputLogs.filter((log) => {
+      const logStart = log.label.split(':')[0];
+      return selectedBlockTypes.includes(logStart) || !blockTypes.includes(logStart); // include logs not associated with a block type - all should be, but in case someone typo's
+    })
+  );
 
   onMount(() => {
     initBlockly();
@@ -113,7 +138,7 @@
   const runCode = () => {
     // generate js and attempt to run it
     generatedJs = javascriptGenerator.workspaceToCode(ws);
-    outputLogs = tryRunJS(generatedJs, context);
+    outputLogs = wtes.tryRun(generatedJs, context);
 
     // generate json from blocks
     let json = jsonGenerator.fromWorkspace(ws);
@@ -124,5 +149,10 @@
       console.error('Unable to parse JSON', e, json);
     }
     generatedJson = json;
+  };
+
+  let showBlockTypeFilters = $state(false);
+  const toggleBlockTypeFilters = () => {
+    showBlockTypeFilters = !showBlockTypeFilters;
   };
 </script>

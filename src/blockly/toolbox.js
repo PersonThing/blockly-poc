@@ -35,6 +35,7 @@ export const toolbox = {
       name: 'System WTEs',
       categorystyle: 'logic_category',
       contents: [
+        // context variables
         {
           kind: 'block',
           type: 'context_variable',

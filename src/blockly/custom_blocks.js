@@ -13,7 +13,7 @@ Blockly.Blocks['array_math'] = array_math;
 import conditional_number from "./blocks/conditional_number.js";
 Blockly.Blocks['conditional_number'] = conditional_number;
 
-import context_variable from "./blocks/context_variable.js";
+import context_variable from "./blocks/context_variable.svelte.js";
 Blockly.Blocks['context_variable'] = context_variable;
 
 import events_math from "./blocks/events_math.js";

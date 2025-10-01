@@ -12,7 +12,7 @@ const call_wte = {
   init: function () {
     this.jsonInit({
       type: 'call_wte',
-      message0: 'Call Custom WTE: %1',
+      message0: 'Call WTE: %1',
       args0: [
         {
           type: 'field_dropdown',
@@ -50,7 +50,7 @@ const define_wte = {
   init: function () {
     this.jsonInit({
       type: 'define_wte',
-      message0: 'Define Custom WTE: %1 \nOutput %2',
+      message0: 'Define WTE: %1 \nOutput %2',
       args0: [
         {
           type: 'field_input',

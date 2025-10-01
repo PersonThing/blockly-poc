@@ -9,6 +9,17 @@ javascriptGenerator.forBlock['context_variable'] = function (block, generator) {
   return [`wtes.context_variable(context, '${variableName}')`, Order.NONE];
 };
 
+javascriptGenerator.forBlock['define_wte'] = function (block, generator) {
+  const name = block.getFieldValue('NAME');
+  const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
+  return `wtes.define_wte('${name}', context => ${output});`;
+};
+
+javascriptGenerator.forBlock['call_wte'] = function (block, generator) {
+  const name = block.getFieldValue('NAME');
+  return [`wtes.call_wte('${name}', context)`, Order.NONE];
+};
+
 javascriptGenerator.forBlock['add'] = function (block, generator) {
   const values = [];
   for (let i = 0; i < block.length; i++) {
@@ -107,17 +118,6 @@ javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
   segmentId = segmentId ? segmentId : 'null';
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
   return [`wtes.segment_frame(context, ${name}, ${segmentId}, (context) => ${output})`, Order.NONE];
-};
-
-javascriptGenerator.forBlock['define_wte'] = function (block, generator) {
-  const name = block.getFieldValue('NAME');
-  const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
-  return `wtes.define_wte('${name}', context => ${output});`;
-};
-
-javascriptGenerator.forBlock['call_wte'] = function (block, generator) {
-  const name = block.getFieldValue('NAME');
-  return [`wtes.call_wte('${name}', context)`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['ratio'] = function (block, generator) {
