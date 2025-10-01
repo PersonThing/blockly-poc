@@ -111,6 +111,15 @@ ${code}`);
     return wtes.logAndReturn(`subtract`, { params }, result);
   },
 
+  make_array: (...items) => {
+    return wtes.logAndReturn(`make_array`, { items }, items);
+  },
+
+  conditional_number: (condition, trueValue, falseValue) => {
+    const result = condition ? trueValue : falseValue;
+    return wtes.logAndReturn(`conditional_number:${condition}`, { condition, trueValue, falseValue }, result);
+  },
+  
   // execute a segment frame, calling outputCallback for each participant in the segment
   // outputCallback is expected to return a value for that participant
   // returns an array of results, one per participant

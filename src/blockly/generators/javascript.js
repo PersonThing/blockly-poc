@@ -47,7 +47,7 @@ javascriptGenerator.forBlock['make_array'] = function (block, generator) {
     const value = generator.valueToCode(block, inputName, 0) || 'null';
     values.push(value);
   }
-  return [`[${values.join(',')}]`, Order.NONE];
+  return [`wtes.make_array([${values.join(',')})`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['array_math'] = function (block, generator) {
@@ -72,7 +72,7 @@ javascriptGenerator.forBlock['conditional_number'] = function (block, generator)
   const condition = generator.valueToCode(block, 'CONDITION', Order.NONE) || 'false';
   const trueValue = generator.valueToCode(block, 'TRUE_VALUE', Order.NONE) || '0';
   const falseValue = generator.valueToCode(block, 'FALSE_VALUE', Order.NONE) || '0';
-  return [`${condition} ? ${trueValue} : ${falseValue}`, Order.CONDITIONAL];
+  return [`wtes.conditional_number(${condition}, ${trueValue}, ${falseValue})`, Order.CONDITIONAL];
 };
 
 javascriptGenerator.forBlock['recurrence'] = function (block, generator) {
