@@ -283,7 +283,7 @@ ${code}`);
       const minCheck = min_inclusive ? input >= min : input > min;
 
       // if min is not inclusive, max should be
-      const maxCheck = max != null ? (min_inclusive ? input < max : input <= max) : true;
+      const maxCheck = max != null && max > 0 ? (min_inclusive ? input < max : input <= max) : true;
 
       wtes.logAndReturn(
         `tier_intersection:check:${min}-${max}`,

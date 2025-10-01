@@ -21,6 +21,11 @@ export function persistentState(key, initial) {
       target[prop] = newVal;
       save();
       return true;
+    },
+    deleteProperty(target, prop) {
+      delete target[prop];
+      save();
+      return true;
     }
   });
 }

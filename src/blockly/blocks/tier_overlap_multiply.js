@@ -38,7 +38,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'tier_overlap_multiply',
-      message0: `Tier Overlap Multiply\nInput %1\nThresholds %2\nReturn Value Proration %3\nMin/Max Proration %4`,
+      message0: `Tier Overlap Multiply\nInput %1\nReturn Value Proration %2\nMin/Max Proration %3`,
       args0: [
         {
           type: 'input_value',
