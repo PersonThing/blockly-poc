@@ -180,6 +180,12 @@ jsonGenerator.most_recent_events = function (block) {
   return `{"type":"most_recent_events", "age":"${age}", "event_type":"${eventType}"}`;
 };
 
+jsonGenerator.multiply = function (block) {
+  const a = this.fromBlock(block.getInputTargetBlock('A'));
+  const b = this.fromBlock(block.getInputTargetBlock('B'));
+  return `{"type":"multiply", "a":${a}, "b":${b}}`;
+};
+
 jsonGenerator.ratio = function (block) {
   const numerator = this.fromBlock(block.getInputTargetBlock('NUMERATOR'));
   const denominator = this.fromBlock(block.getInputTargetBlock('DENOMINATOR'));
@@ -213,32 +219,48 @@ jsonGenerator.target_achieved_excess = function (block) {
   return `{"type":"target_achieved_excess", "input":${input}, "target":${target}, "target_compare":"${targetCompare}", "return_value":${returnValue}, "target_proration":${targetProration}, "return_value_proration":${returnValueProration}}`;
 };
 
+jsonGenerator.getTiersFromBlock = function (block) {
+  const tiers = [];
+  for (let i = 0; i < block.length; i++) {
+    const tierBlock = block.getInputTargetBlock(`tier_${i}`);
+    if (tierBlock) {
+      tiers.push(this.fromBlock(tierBlock));
+    }
+  }
+  return tiers;
+};
+
 jsonGenerator.tier_intersection = function (block) {
   const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
-  const thresholds = JSON.stringify(sample_tiers.map((t) => [t.min, t.max, t.value]));
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
-  return `{"type":"tier_intersection", "input":${input}, "thresholds":${thresholds}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
+  const tiers = this.getTiersFromBlock(block);
+  return `{"type":"tier_intersection", "input":${input}, "tiers":[${tiers.join(',')}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
 };
 
 jsonGenerator.tier_intersection_multiply = function (block) {
   const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
-  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
-  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
-  return `{"type":"tier_intersection_multiply", "input":${input}, "thresholds":${JSON.stringify(thresholds)}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
+  const tiers = this.getTiersFromBlock(block);
+  return `{"type":"tier_intersection_multiply", "input":${input}, "tiers":[${tiers.join(',')}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}}`;
 };
 
 jsonGenerator.tier_overlap_multiply = function (block) {
   const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
-  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
-  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
-  return `{"type":"tier_overlap_multiply", "input":${input}, "thresholds":${JSON.stringify(thresholds)}, "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}}`;
+  const tiers = this.getTiersFromBlock(block);
+  return `{"type":"tier_overlap_multiply", "input":${input}, "tiers":[${tiers.join(',')}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}}`;
 };
+
+jsonGenerator.tier = function (block) {
+  const min = Number(block.getFieldValue('MIN'));
+  const max = Number(block.getFieldValue('MAX'));
+  const value = this.fromBlock(block.getInputTargetBlock('VALUE'));
+  return `{"type":"tier", "min":${isNaN(min) ? null : min}, "max":${isNaN(max) ? null : max}, "value":${value}}`;
+}
 
 export default jsonGenerator;

@@ -7,7 +7,7 @@ const wtes = {
   tryRun: (code, cx) => {
     wtes.logs = [];
     wtes.context = cx;
-    
+
     try {
       eval(`
 const context = wtes.context;
@@ -117,9 +117,13 @@ ${code}`);
 
   conditional_number: (condition, trueValue, falseValue) => {
     const result = condition ? trueValue : falseValue;
-    return wtes.logAndReturn(`conditional_number:${condition}`, { condition, trueValue, falseValue }, result);
+    return wtes.logAndReturn(
+      `conditional_number:${condition}`,
+      { condition, trueValue, falseValue },
+      result
+    );
   },
-  
+
   // execute a segment frame, calling outputCallback for each participant in the segment
   // outputCallback is expected to return a value for that participant
   // returns an array of results, one per participant
@@ -267,22 +271,25 @@ ${code}`);
   tier_intersection: (params) => {
     const {
       input,
-      thresholds,
+      tiers,
       return_value_proration = 1,
       min_max_proration = 1,
       min_inclusive = false,
-      multiplyByInput = false, // only true for tier_intersection_multiply block
     } = params;
     let tier = null;
-    for (const t of thresholds) {
-      const [min, max, value] = t;
+    for (const t of tiers) {
+      const { min, max, value } = t;
 
       const minCheck = min_inclusive ? input >= min : input > min;
 
       // if min is not inclusive, max should be
       const maxCheck = max != null ? (min_inclusive ? input < max : input <= max) : true;
 
-      wtes.logAndReturn(`tier_intersection:check:${min}-${max}`, { input, tier: t }, minCheck && maxCheck);
+      wtes.logAndReturn(
+        `tier_intersection:check:${min}-${max}`,
+        { input, tier: t },
+        minCheck && maxCheck
+      );
 
       if (minCheck && maxCheck) {
         tier = { min, max, value };
@@ -295,16 +302,21 @@ ${code}`);
     }
 
     let tierValue = tier.value * return_value_proration * min_max_proration;
-    const result = multiplyByInput ? tierValue * input : tierValue;
     return wtes.logAndReturn(
       `tier_intersection:${tier.min}-${tier.max}`,
-      { ...params, tier, tierValue, result },
-      result
+      { ...params, tier, tierValue },
+      tierValue
     );
   },
 
   tier_intersection_multiply: (params) => {
-    return wtes.getTierIntersection({ ...params, multiplyByInput: true });
+    const tierValue = wtes.tier_intersection(params);
+    const result = tierValue * params.input;
+    return wtes.logAndReturn(
+      `tier_intersection_multiply`,
+      { ...params, tierValue, result },
+      result
+    );
   },
 
   /**
@@ -342,6 +354,12 @@ ${code}`);
     return wtes.logAndReturn(`tier_overlap_multiply`, { ...params, total }, total);
   },
 
+  tier: (params) => {
+    const { min, max, value } = params;
+    const tier = { min, max, value };
+    return wtes.logAndReturn(`tier:${min}-${max}`, params, tier);
+  },
+
   array_math: (mathType, list) => {
     const result = wtes.arrayMath(mathType, list);
     return wtes.logAndReturn(`array_math:${mathType}`, { mathType, list }, result);
@@ -365,6 +383,11 @@ ${code}`);
     // assume events are ordered oldest to newest
     const result = age === 'MOST RECENT' ? events.slice(-1)[0] : events.slice(0, 1)[0];
     return wtes.logAndReturn(`most_recent_event:${eventType}:${age}`, { age, eventType }, result);
+  },
+
+  multiply: (a, b) => {
+    const result = a * b;
+    return wtes.logAndReturn(`multiply`, { a, b }, result);
   },
 };
 

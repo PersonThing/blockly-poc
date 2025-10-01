@@ -30,9 +30,11 @@
       Total = 800
 */
 
-import sample_tiers from '../mock_data/sample_tiers';
+import { FieldTextButton } from './FieldTextButton.js';
 
 export default {
+  length: 0,
+
   init: function () {
     this.jsonInit({
       type: 'tier_overlap_multiply',
@@ -42,12 +44,6 @@ export default {
           type: 'input_value',
           name: 'INPUT',
           check: 'Number',
-        },
-        {
-          type: 'field_dropdown',
-          name: 'THRESHOLD_ID',
-          options: sample_tiers.map((t, index) => [JSON.stringify(t), `${index}`]),
-          value: 0,
         },
         {
           type: 'field_number',
@@ -63,5 +59,42 @@ export default {
       output: 'Number',
       colour: 230,
     });
+
+    // add a button to add thresholds
+    this.appendDummyInput('tiers')
+      .appendField('Tiers')
+      .appendField(
+        new FieldTextButton('+', () => {
+          this.addInput();
+        })
+      );
+  },
+
+  addInput: function () {
+    const lastIndex = this.length++;
+    const inputName = `tier_${lastIndex}`;
+
+    // add a new tier input
+    const appendedInput = this.appendValueInput(inputName).setCheck('Tier');
+
+    // add a button to remove this input
+    appendedInput.appendField(
+      new FieldTextButton('-', () => {
+        this.removeInput(inputName);
+        this.length--;
+      })
+    );
+  },
+
+  saveExtraState: function () {
+    return {
+      length: this.length,
+    };
+  },
+
+  loadExtraState: function (state) {
+    for (let i = 0; i < state.length; i++) {
+      this.addInput();
+    }
   },
 };

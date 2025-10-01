@@ -25,6 +25,9 @@ Blockly.Blocks['make_array'] = make_array;
 import most_recent_events from "./blocks/most_recent_events.js";
 Blockly.Blocks['most_recent_events'] = most_recent_events;
 
+import multiply from "./blocks/multiply.js";
+Blockly.Blocks['multiply'] = multiply;
+
 import offset from "./blocks/offset.js";
 Blockly.Blocks['offset'] = offset;
 
@@ -60,3 +63,6 @@ Blockly.Blocks['tier_intersection_multiply'] = tier_intersection_multiply;
 
 import tier_overlap_multiply from "./blocks/tier_overlap_multiply.js";
 Blockly.Blocks['tier_overlap_multiply'] = tier_overlap_multiply;
+
+import tier from "./blocks/tier.js";
+Blockly.Blocks['tier'] = tier;

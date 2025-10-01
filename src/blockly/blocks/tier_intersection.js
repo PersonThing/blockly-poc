@@ -1,39 +1,35 @@
 /*
-  WTE_TIER_INTERSECTION
+WTE_TIER_INTERSECTION
 
-  Purpose:
-    Returns tier value when input falls within a threshold range
+Purpose:
+Returns tier value when input falls within a threshold range
 
-  Inputs:
-    x (fixed): Input value to evaluate (decimal.Decimal)
-    thresholds (fixed): Array of [min, max, value] triplets ([][]*decimal.Decimal)
-    return_value_proration (fixed): Multiplier for return values (decimal.Decimal)
-    min_max_proration (fixed): Multiplier for threshold boundaries (decimal.Decimal)
-    min_inclusive (fixed): Whether minimum threshold is inclusive (bool)
+Inputs:
+x (fixed): Input value to evaluate (decimal.Decimal)
+return_value_proration (fixed): Multiplier for return values (decimal.Decimal)
+min_max_proration (fixed): Multiplier for threshold boundaries (decimal.Decimal)
+min_inclusive (fixed): Whether minimum threshold is inclusive (bool)
+thresholds (fixed): Array of [min, max, value] triplets ([][]*decimal.Decimal)
 
-  Outputs:
-    Output: Tier value if match found, 0 otherwise
-    Context: min, max, value of matching tier
+Outputs:
+Output: Tier value if match found, 0 otherwise
+Context: min, max, value of matching tier
 */
 
-import sample_tiers from '../mock_data/sample_tiers';
+import { FieldTextButton } from './FieldTextButton.js';
 
 export default {
+  length: 0,
+
   init: function () {
     this.jsonInit({
       type: 'tier_intersection',
-      message0: `Tier Intersection\nInput %1\nThresholds %2\nReturn Value Proration %3\nMin/Max Proration %4\nMin Inclusive %5`,
+      message0: `Tier Intersection\nInput %1\nReturn Value Proration %2\nMin/Max Proration %3\nMin Inclusive %4`,
       args0: [
         {
           type: 'input_value',
           name: 'INPUT',
           check: 'Number',
-        },
-        {
-          type: 'field_dropdown',
-          name: 'THRESHOLD_ID',
-          options: sample_tiers.map((t, index) => [JSON.stringify(t), `${index}`]),
-          value: 0,
         },
         {
           type: 'field_number',
@@ -54,5 +50,42 @@ export default {
       output: 'Number',
       colour: 230,
     });
+
+    // add a button to add thresholds
+    this.appendDummyInput('tiers')
+      .appendField('Tiers')
+      .appendField(
+        new FieldTextButton('+', () => {
+          this.addInput();
+        })
+      );
+  },
+
+  addInput: function () {
+    const lastIndex = this.length++;
+    const inputName = `tier_${lastIndex}`;
+
+    // add a new tier input
+    const appendedInput = this.appendValueInput(inputName).setCheck('Tier');
+
+    // add a button to remove this input
+    appendedInput.appendField(
+      new FieldTextButton('-', () => {
+        this.removeInput(inputName);
+        this.length--;
+      })
+    );
+  },
+
+  saveExtraState: function () {
+    return {
+      length: this.length,
+    };
+  },
+
+  loadExtraState: function (state) {
+    for (let i = 0; i < state.length; i++) {
+      this.addInput();
+    }
   },
 };

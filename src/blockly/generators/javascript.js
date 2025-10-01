@@ -68,6 +68,12 @@ javascriptGenerator.forBlock['most_recent_events'] = function (block, generator)
   return [`wtes.most_recent_events('${age}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
+javascriptGenerator.forBlock['multiply'] = function (block, generator) {
+  const a = generator.valueToCode(block, 'A', Order.NONE) || '0';
+  const b = generator.valueToCode(block, 'B', Order.NONE) || '0';
+  return [`wtes.multiply(${a}, ${b})`, Order.MULTIPLICATION];
+};
+
 javascriptGenerator.forBlock['conditional_number'] = function (block, generator) {
   const condition = generator.valueToCode(block, 'CONDITION', Order.NONE) || 'false';
   const trueValue = generator.valueToCode(block, 'TRUE_VALUE', Order.NONE) || '0';
@@ -108,7 +114,10 @@ javascriptGenerator.forBlock['recurrence_frame'] = function (block, generator) {
   const offset = generator.valueToCode(block, 'OFFSET', Order.NONE) || 'null';
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
 
-  return [`wtes.recurrence_frame(context, ${recurrence}, ${offset}, (context) => ${output})`, Order.NONE];
+  return [
+    `wtes.recurrence_frame(context, ${recurrence}, ${offset}, (context) => ${output})`,
+    Order.NONE,
+  ];
 };
 
 javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
@@ -184,16 +193,28 @@ javascriptGenerator.forBlock['target_achieved_excess'] = function (block, genera
   ];
 };
 
+const getTiersFromBlock = (block, generator) => {
+  const tiers = [];
+  for (let i = 0; i < block.length; i++) {
+    const inputName = `tier_${i}`;
+    const tier = generator.valueToCode(block, inputName, Order.NONE) || 'null';
+    tiers.push(tier);
+  }
+  return tiers;
+};
+
 javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const thresholds = JSON.stringify(sample_tiers.map((t) => [t.min, t.max, t.value]));
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  const tiers = getTiersFromBlock(block, generator);
   return [
     `wtes.tier_intersection({
   input: ${input},
-  thresholds: ${thresholds},
+  tiers: [
+    ${tiers.join(',\n    ')}
+  ],
   return_value_proration: ${returnValueProration},
   min_max_proration: ${minMaxProration},
   min_inclusive: ${minInclusive}
@@ -204,15 +225,16 @@ javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) 
 
 javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
-  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  const tiers = getTiersFromBlock(block, generator);
   return [
     `wtes.tier_intersection_multiply({
   input: ${input},
-  thresholds: ${JSON.stringify(thresholds)},
+  tiers: [
+    ${tiers.join(',\n    ')}
+  ],
   return_value_proration: ${returnValueProration},
   min_max_proration: ${minMaxProration},
   min_inclusive: ${minInclusive}
@@ -223,18 +245,33 @@ javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, ge
 
 javascriptGenerator.forBlock['tier_overlap_multiply'] = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const thresholdsId = block.getFieldValue('THRESHOLD_ID');
-  const thresholds = thresholdsId >= 0 && thresholdsId < sample_tiers.length ? sample_tiers[thresholdsId] : [];
   const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
   const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const tiers = getTiersFromBlock(block, generator);
   return [
     `wtes.tier_overlap_multiply({
   input: ${input},
-  thresholds: ${JSON.stringify(thresholds)},
+  tiers: [
+    ${tiers.join(',\n    ')}
+  ],
   return_value_proration: ${returnValueProration},
   min_max_proration: ${minMaxProration}
 })`,
     Order.FUNCTION_CALL,
+  ];
+};
+
+javascriptGenerator.forBlock['tier'] = function (block, generator) {
+  const min = Number(block.getFieldValue('MIN'));
+  const max = Number(block.getFieldValue('MAX'));
+  const value = generator.valueToCode(block, 'VALUE', Order.NONE) || 'null';
+  return [
+    `wtes.tier({
+      "min": ${isNaN(min) ? null : min},
+      "max": ${isNaN(max) ? null : max},
+      "value": ${value}
+    })`,
+    Order.NONE,
   ];
 };
 

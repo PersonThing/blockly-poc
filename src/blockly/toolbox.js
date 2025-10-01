@@ -73,6 +73,10 @@ export const toolbox = {
           kind: 'block',
           type: 'subtract',
         },
+        {
+          kind: 'block',
+          type: 'multiply',
+        },
 
         {
           kind: 'block',
@@ -102,6 +106,11 @@ export const toolbox = {
         {
           kind: 'block',
           type: 'tier_overlap_multiply',
+        },
+
+        {
+          kind: 'block',
+          type: 'tier',
         },
 
         {

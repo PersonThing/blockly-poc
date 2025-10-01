@@ -46,6 +46,7 @@ pre {
 #input {
   height: 30%;
   background: #eee;
+  overflow: auto;
 }
 
 #input .inputItem {
@@ -96,10 +97,9 @@ pre {
 }
 
 #output .logEntry pre {
-  text-align: right;
   padding: 0;
   margin: 0;
-  width: 100px;
+  width: 150px;
 }
 
 #generatedCode {

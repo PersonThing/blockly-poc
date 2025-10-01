@@ -2,6 +2,7 @@
   <div class="inputItem">
     <label for={key}>{key}:</label>
     <input type="number" id={key} name={key} bind:value={context[key]} onkeyup={runCode} />
+    <button onclick={() => { delete context[key]; runCode(); }}>x</button>
   </div>
 {/each}
 
@@ -25,3 +26,9 @@
     }
   }
 </script>
+
+<style>
+  button {
+    padding: 2px 6px;
+  }
+</style>
