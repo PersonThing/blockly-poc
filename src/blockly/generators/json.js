@@ -1,5 +1,4 @@
 import * as Blockly from 'blockly';
-import sample_tiers from '../mock_data/sample_tiers';
 
 const jsonGenerator = new Blockly.Generator('JSON');
 
@@ -106,7 +105,6 @@ jsonGenerator.recurrence_frame = function (block) {
   const recurrenceJson = this.fromBlock(block.getInputTargetBlock('RECURRENCE'));
   const offsetJson = this.fromBlock(block.getInputTargetBlock('OFFSET'));
   const outputJson = this.fromBlock(block.getInputTargetBlock('OUTPUT'));
-
   const jsonOutput = {
     type: 'recurrence_frame',
     value: {
@@ -115,7 +113,6 @@ jsonGenerator.recurrence_frame = function (block) {
       output: outputJson ? JSON.parse(outputJson) : null,
     },
   };
-
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
 
@@ -123,7 +120,6 @@ jsonGenerator.segment_frame = function (block) {
   const name = block.getFieldValue('NAME');
   const segmentId = block.getFieldValue('SEGMENT_ID');
   const outputJson = this.fromBlock(block.getInputTargetBlock('OUTPUT'));
-
   const jsonOutput = {
     type: 'segment_frame',
     value: {
@@ -132,7 +128,6 @@ jsonGenerator.segment_frame = function (block) {
       output: outputJson ? JSON.parse(outputJson) : null,
     },
   };
-
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
 

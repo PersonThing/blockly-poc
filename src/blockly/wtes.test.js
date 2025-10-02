@@ -201,33 +201,16 @@ describe('wte tests', () => {
     expect(result).toBe(0); // no tier matched
   });
 
-  /*
-    Example scenario:
-    thresholds = [ [0, 100, 5], [100, 200, 6], [200, null, 7] ]
-    return_value_proration = 1
-    min_max_proration = 1
-
-    If x = 250:
-        Tier 1: (100 - 0) * 5 = 500
-        Tier 2: (200 - 100) * 6 = 600
-        Tier 3: (250 - 200) * 7 = 350
-        Total = 1450
-
-    If x = 150:
-        Tier 1: (100 - 0) * 5 = 500
-        Tier 2: (150 - 100) * 6 = 300
-        Total = 800} params 
-  */
   it('should determine tier_overlap_multiply correctly', () => {
-    const thresholds = [
-      [0, 100, 5],
-      [100, 200, 6],
-      [200, null, 7],
+    const tiers = [
+      { min: 0, max: 100, value: 5 },
+      { min: 100, max: 200, value: 6 },
+      { min: 200, max: null, value: 7 },
     ];
 
     let params = {
       input: 250,
-      thresholds,
+      tiers,
       return_value_proration: 1,
       min_max_proration: 1,
     };

@@ -1,6 +1,5 @@
 import { SampleEvents } from './mock_data/sample_events.js';
 import SampleSegments from './mock_data/sample_segments.js';
-import SampleTiers from './mock_data/sample_tiers.js';
 
 const wtes = {
   // reset logs and context and attempt to execute generated js from blockly
@@ -31,7 +30,6 @@ ${code}`);
 
   // sample data available during execution
   SampleSegments,
-  SampleTiers,
   SampleEvents,
 
   // helpers several wtes use
@@ -320,11 +318,11 @@ ${code}`);
   },
 
   tier_overlap_multiply: (params) => {
-    const { input, thresholds, return_value_proration = 1, min_max_proration = 1 } = params;
+    const { input, tiers, return_value_proration = 1, min_max_proration = 1 } = params;
     let total = 0;
     let remaining = input;
 
-    for (const [min, max, rate] of thresholds) {
+    for (const { min, max, value } of tiers) {
       if (remaining <= 0) break;
       const tierMin = min ?? 0;
       const tierMax = max ?? input;
@@ -336,7 +334,7 @@ ${code}`);
         const lower = tierMin;
         // The amount in this tier is the difference between upper and lower, but not less than 0
         const amount = Math.max(upper - lower, 0);
-        total += amount * rate;
+        total += amount * value;
       }
     }
 

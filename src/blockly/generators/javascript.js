@@ -1,5 +1,5 @@
 import { javascriptGenerator, Order } from 'blockly/javascript';
-import sample_tiers from '../mock_data/sample_tiers';
+import sample_segments from '../mock_data/sample_segments';
 
 // for simplicity, this generator should only handle values out of field values / inputs / child blocks / etc
 // and then calling a helper function in wtes.<block_name> passing said values
@@ -125,7 +125,7 @@ javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
   name = name ? `'${name}'` : 'null';
   let segmentId = block.getFieldValue('SEGMENT_ID');
   segmentId = segmentId ? segmentId : 'null';
-  const segment = sample_tiers[segmentId] || [];
+  const segment = sample_segments[segmentId] || [];
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
   return [`wtes.segment_frame(context, ${name}, ${JSON.stringify(segment)}, (context) => ${output})`, Order.NONE];
 };

@@ -54,7 +54,7 @@ export default {
       colour: 230,
     });
 
-    // add a button to add thresholds
+    // add a button to add tiers
     this.appendDummyInput('tiers')
       .appendField('Tiers')
       .appendField(
