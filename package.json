@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "deploy": "npm run build && node deploy-gh-pages.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "keywords": [
     "blockly"
@@ -22,7 +23,8 @@
     "source-map-loader": "^4.0.1",
     "style-loader": "^3.3.1",
     "svelte": "^5.38.10",
-    "vite": "^7.1.6"
+    "vite": "^7.1.6",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@blockly/field-date": "^10.0.2",

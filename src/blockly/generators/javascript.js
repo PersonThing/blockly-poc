@@ -125,8 +125,9 @@ javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
   name = name ? `'${name}'` : 'null';
   let segmentId = block.getFieldValue('SEGMENT_ID');
   segmentId = segmentId ? segmentId : 'null';
+  const segment = sample_tiers[segmentId] || [];
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
-  return [`wtes.segment_frame(context, ${name}, ${segmentId}, (context) => ${output})`, Order.NONE];
+  return [`wtes.segment_frame(context, ${name}, ${JSON.stringify(segment)}, (context) => ${output})`, Order.NONE];
 };
 
 javascriptGenerator.forBlock['ratio'] = function (block, generator) {

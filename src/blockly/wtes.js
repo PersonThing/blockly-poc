@@ -36,7 +36,7 @@ ${code}`);
 
   // helpers several wtes use
   isConditionMet: function (item, type, value) {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'equals':
         return item === value;
       case 'not_equals':
@@ -60,15 +60,15 @@ ${code}`);
       case 'COUNT':
         return list.length;
       case 'MAX':
-        return Math.max(...list);
+        return list.length > 0 ? Math.max(...list) : null;
       case 'MIN':
-        return Math.min(...list);
+        return list.length > 0 ? Math.min(...list) : null;
       case 'AVERAGE':
-        return list.reduce((a, b) => a + b, 0) / list.length;
+        return list.length > 0 ? list.reduce((a, b) => a + b, 0) / list.length : null;
       case 'SUM':
-        return list.reduce((a, b) => a + b, 0);
+        return list.length > 0 ? list.reduce((a, b) => a + b, 0) : null;
       case 'MULTIPLY':
-        return list.reduce((a, b) => a * b, 1);
+        return list.length > 0 ? list.reduce((a, b) => a * b, 1) : null;
       default:
         return null;
     }
@@ -128,13 +128,12 @@ ${code}`);
   // outputCallback is expected to return a value for that participant
   // returns an array of results, one per participant
   // each result is logged with the participant name
-  segment_frame: (context, name, segmentId, outputCallback) => {
-    const participants = SampleSegments[segmentId] || [];
+  segment_frame: (context, name, segment, outputCallback) => {
     const executionContext = {
       ...context,
-      participants,
+      segment,
     };
-    return participants.map((p, i) =>
+    return segment.map((p, i) =>
       wtes.logAndReturn(
         `segment_frame:${i + 1}:${p.name}`,
         { name, participant: p },
@@ -247,6 +246,7 @@ ${code}`);
     } = params;
     let adjustedTarget = target * target_proration;
     let achieved = wtes.isConditionMet(input, target_compare, adjustedTarget);
+    console.log('condition met', achieved);
     if (!achieved) {
       return wtes.logAndReturn(`target_achieved_excess:false`, { ...params, adjustedTarget }, 0);
     }
@@ -319,38 +319,28 @@ ${code}`);
     );
   },
 
-  /**
-     *
-        Example scenario:
-        thresholds = [ [0, 100, 5], [100, 200, 6], [200, null, 7] ]
-        return_value_proration = 1
-        min_max_proration = 1
-
-        If x = 250:
-            Tier 1: (100 - 0) * 5 = 500
-            Tier 2: (200 - 100) * 6 = 600
-            Tier 3: (250 - 200) * 7 = 350
-            Total = 1450
-
-        If x = 150:
-            Tier 1: (100 - 0) * 5 = 500
-            Tier 2: (150 - 100) * 6 = 300
-            Total = 800} params 
-    */
   tier_overlap_multiply: (params) => {
     const { input, thresholds, return_value_proration = 1, min_max_proration = 1 } = params;
+    let total = 0;
+    let remaining = input;
 
-    // let total = 0;
-    // let left = input;
-    // for (const t of thresholds) {
-    //   if (left <= 0) break; // no more input left to allocate
-    //   const [ min, max, rate ] = t;
-    //   if (input >= min) {
-    //   }
-    // }
+    for (const [min, max, rate] of thresholds) {
+      if (remaining <= 0) break;
+      const tierMin = min ?? 0;
+      const tierMax = max ?? input;
+      // Only count overlap if input exceeds the tier min
+      if (input > tierMin) {
+        // The upper bound for this tier is either the tier's max or the input, whichever is lower
+        const upper = Math.min(tierMax, input);
+        // The lower bound is the tier's min
+        const lower = tierMin;
+        // The amount in this tier is the difference between upper and lower, but not less than 0
+        const amount = Math.max(upper - lower, 0);
+        total += amount * rate;
+      }
+    }
 
-    const total = 3.33; // too tired to figure out the logic, just putting placeholder in for now
-
+    total = total * return_value_proration * min_max_proration;
     return wtes.logAndReturn(`tier_overlap_multiply`, { ...params, total }, total);
   },
 
@@ -381,7 +371,7 @@ ${code}`);
   most_recent_events: (age, eventType) => {
     const events = SampleEvents.filter((e) => e.type === eventType).map((e) => e.value);
     // assume events are ordered oldest to newest
-    const result = age === 'MOST RECENT' ? events.slice(-1)[0] : events.slice(0, 1)[0];
+    const result = age.toLowerCase() === 'most recent' ? events.slice(-1)[0] : events.slice(0, 1)[0];
     return wtes.logAndReturn(`most_recent_event:${eventType}:${age}`, { age, eventType }, result);
   },
 
