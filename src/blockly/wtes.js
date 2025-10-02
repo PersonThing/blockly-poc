@@ -4,7 +4,7 @@ import SampleSegments from './mock_data/sample_segments.js';
 const wtes = {
   // reset logs and context and attempt to execute generated js from blockly
   tryRun: (code, cx) => {
-    wtes.logs = [];
+    wtes.reset();
     wtes.context = cx;
 
     try {
@@ -16,6 +16,11 @@ ${code}`);
       console.error('Error during generated code execution', e);
     }
     return wtes.logs.reverse();
+  },
+  
+  reset: () => {
+    wtes.logs = [];
+    wtes.context = {};
   },
 
   // execution context
@@ -322,7 +327,8 @@ ${code}`);
     let total = 0;
     let remaining = input;
 
-    for (const { min, max, value } of tiers) {
+    for (let { min, max, value } of tiers) {
+      if (max == 0) max = null;
       if (remaining <= 0) break;
       const tierMin = min ?? 0;
       const tierMax = max ?? input;
@@ -334,6 +340,11 @@ ${code}`);
         const lower = tierMin;
         // The amount in this tier is the difference between upper and lower, but not less than 0
         const amount = Math.max(upper - lower, 0);
+        wtes.logAndReturn(
+          `tier_overlap_multiply:apply:${min}-${max}`,
+          { input, tier: { min, max, value }, amount },
+          amount * value
+        );
         total += amount * value;
       }
     }
@@ -344,6 +355,7 @@ ${code}`);
 
   tier: (params) => {
     const { min, max, value } = params;
+    console.log('tier params', params);
     const tier = { min, max, value };
     return wtes.logAndReturn(`tier:${min}-${max}`, params, tier);
   },
@@ -369,7 +381,8 @@ ${code}`);
   most_recent_events: (age, eventType) => {
     const events = SampleEvents.filter((e) => e.type === eventType).map((e) => e.value);
     // assume events are ordered oldest to newest
-    const result = age.toLowerCase() === 'most recent' ? events.slice(-1)[0] : events.slice(0, 1)[0];
+    const result =
+      age.toLowerCase() === 'most recent' ? events.slice(-1)[0] : events.slice(0, 1)[0];
     return wtes.logAndReturn(`most_recent_event:${eventType}:${age}`, { age, eventType }, result);
   },
 

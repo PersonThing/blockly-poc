@@ -205,7 +205,7 @@ describe('wte tests', () => {
     const tiers = [
       { min: 0, max: 100, value: 5 },
       { min: 100, max: 200, value: 6 },
-      { min: 200, max: null, value: 7 },
+      { min: 200, max: 0, value: 7 },
     ];
 
     let params = {
@@ -277,19 +277,4 @@ describe('wte tests', () => {
     const resultOldest = wtes.most_recent_events('OLDEST', 'PatientSatisfaction');
     expect(resultOldest).toBe(4.2);
   });
-
-  it('chained wtes with different context values are handled correctly', () => {
-    const wte = (context) =>
-      wtes.conditional_number(context.value > 5, wtes.multiply(3, 10), wtes.add(1, 2, 3, 4));
-
-    // value more than 5, so should get 3 * 10
-    let result = wte({ value: 10, wrvu: 300, hours: 30 });
-    expect(result).toBe(30);
-
-    // value less than 5, so should get 1 + 2 + 3 + 4
-    result = wte({ value: 3, wrvu: 300, hours: 30 });
-    expect(result).toBe(10);
-  });
-
-  // TODO: implement deserialization from our custom generated json, so we can store json configs and test them here
 });

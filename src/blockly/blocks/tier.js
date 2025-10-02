@@ -6,7 +6,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'tier',
-      message0: 'Tier Min %1 Max %2 Output %3\n',
+      message0: 'Tier Min %1 Max %2\nValue %3\n',
       args0: [
         {
           type: 'field_input',
