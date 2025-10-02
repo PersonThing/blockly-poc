@@ -67,6 +67,7 @@ pre {
 }
 
 #output .logEntry {
+  clear: both;
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid #eee;
@@ -90,16 +91,18 @@ pre {
 }
 
 #output .logEntry label {
-  flex: 1;
   font-weight: bold;
   text-align: left;
-  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #output .logEntry pre {
   padding: 0;
   margin: 0;
-  width: 150px;
+  flex: 1;
 }
 
 #generatedCode {
