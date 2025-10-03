@@ -1,4 +1,4 @@
-{#each Object.keys(context) as key}
+{#each Object.keys(context).sort() as key}
   <div class="inputItem">
     <label for={key}>{key}:</label>
     <input type="number" id={key} name={key} bind:value={context[key]} onkeyup={runCode} />

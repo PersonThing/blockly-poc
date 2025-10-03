@@ -12,6 +12,8 @@ your toolbox from scratch, or carefully choosing whether you need each block
 listed here.
 */
 
+import math_operations from './math_operations.js';
+
 export const toolbox = {
   kind: 'categoryToolbox',
   contents: [
@@ -32,55 +34,64 @@ export const toolbox = {
     },
     {
       kind: 'category',
-      name: 'System WTEs',
+      name: 'Basics',
       categorystyle: 'logic_category',
       contents: [
-        // context variables
         {
           kind: 'block',
           type: 'context_variable',
         },
 
-        // arrays
         {
           kind: 'block',
-          type: 'make_array',
+          type: 'number',
+          fields: {
+            VALUE: 123,
+          },
         },
+
         {
           kind: 'block',
-          type: 'array_math',
+          type: 'conditional_number',
+          inputs: {
+            LEFT: {
+              shadow: {
+                type: 'number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+            RIGHT: {
+              shadow: {
+                type: 'number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+            TRUE_VALUE: {
+              shadow: {
+                type: 'number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+            FALSE_VALUE: {
+              shadow: {
+                type: 'number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+          },
         },
+
         {
           kind: 'block',
           type: 'ratio_condition_true',
-        },
-
-        // events
-        {
-          kind: 'block',
-          type: 'events_math',
-        },
-        {
-          kind: 'block',
-          type: 'most_recent_events',
-        },
-
-        {
-          kind: 'block',
-          type: 'add',
-        },
-        {
-          kind: 'block',
-          type: 'subtract',
-        },
-        {
-          kind: 'block',
-          type: 'multiply',
-        },
-
-        {
-          kind: 'block',
-          type: 'ratio',
         },
 
         {
@@ -92,32 +103,60 @@ export const toolbox = {
           kind: 'block',
           type: 'target_achieved_excess',
         },
+      ],
+    },
 
+    {
+      kind: 'category',
+      name: 'Math',
+      categorystyle: 'math_category',
+      contents: [
+        {
+          kind: 'block',
+          type: 'math',
+        },
+        {
+          kind: 'block',
+          type: 'array_math',
+        },
+
+        ...math_operations.map((op) => ({
+          kind: 'block',
+          type: op,
+        }))
+      ],
+    },
+
+    {
+      kind: 'category',
+      name: 'Tiers',
+      categorystyle: 'text_category',
+      contents: [
         {
           kind: 'block',
           type: 'tier_intersection',
           inputs: {
             INPUT: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
-                  NUM: 1,
+                  VALUE: 1,
                 },
               },
             },
             RETURN_VALUE_PRORATION: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
-                  NUM: 1,
+                  VALUE: 1,
                 },
               },
             },
             MIN_MAX_PRORATION: {
               shadow: {
-                type: 'math_number',
+                type: 'number',
                 fields: {
-                  NUM: 1,
+                  VALUE: 1,
                 },
               },
             },
@@ -133,10 +172,21 @@ export const toolbox = {
           kind: 'block',
           type: 'tier',
         },
+      ],
+    },
 
+    {
+      kind: 'category',
+      name: 'Events',
+      categorystyle: 'text_category',
+      contents: [
         {
           kind: 'block',
-          type: 'conditional_number',
+          type: 'events_math',
+        },
+        {
+          kind: 'block',
+          type: 'most_recent_events',
         },
       ],
     },
@@ -164,250 +214,5 @@ export const toolbox = {
         },
       ],
     },
-
-    {
-      kind: 'category',
-      name: 'Blockly built-in',
-      categorystyle: 'logic_category',
-      contents: [
-        // basics + built-in stuff
-        {
-          kind: 'block',
-          type: 'logic_compare',
-        },
-        {
-          kind: 'block',
-          type: 'logic_operation',
-        },
-        {
-          kind: 'block',
-          type: 'logic_negate',
-        },
-        {
-          kind: 'block',
-          type: 'logic_boolean',
-        },
-        {
-          kind: 'block',
-          type: 'logic_null',
-        },
-        {
-          kind: 'block',
-          type: 'logic_ternary',
-        },
-        {
-          kind: 'block',
-          type: 'math_number',
-          fields: {
-            NUM: 123,
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_arithmetic',
-          inputs: {
-            A: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-            B: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_single',
-          inputs: {
-            NUM: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 9,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_trig',
-          inputs: {
-            NUM: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 45,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_constant',
-        },
-        {
-          kind: 'block',
-          type: 'math_number_property',
-          inputs: {
-            NUMBER_TO_CHECK: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 0,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_round',
-          fields: {
-            OP: 'ROUND',
-          },
-          inputs: {
-            NUM: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 3.1,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_on_list',
-          fields: {
-            OP: 'SUM',
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_modulo',
-          inputs: {
-            DIVIDEND: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 64,
-                },
-              },
-            },
-            DIVISOR: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 10,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_constrain',
-          inputs: {
-            VALUE: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 50,
-                },
-              },
-            },
-            LOW: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-            HIGH: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 100,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_random_int',
-          inputs: {
-            FROM: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-            TO: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 100,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'math_random_float',
-        },
-        {
-          kind: 'block',
-          type: 'math_atan2',
-          inputs: {
-            X: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-            Y: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 1,
-                },
-              },
-            },
-          },
-        },
-      ],
-    },
-
-    // {
-    //   kind: "category",
-    //   name: "Variables",
-    //   categorystyle: "variable_category",
-    //   custom: "VARIABLE",
-    // },
-    // {
-    //   kind: "category",
-    //   name: "Functions",
-    //   categorystyle: "procedure_category",
-    //   custom: "PROCEDURE",
-    // },
   ],
 };

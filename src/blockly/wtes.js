@@ -1,6 +1,27 @@
 import { SampleEvents } from './mock_data/sample_events.js';
 import SampleSegments from './mock_data/sample_segments.js';
 
+// helpers several wtes use
+function isConditionMet(left, operator, right) {
+  switch (operator.toLowerCase()) {
+    case 'equals':
+      return left === right;
+    case 'not_equals':
+      return left !== right;
+    case 'greater_than':
+      return left > right;
+    case 'less_than':
+      return left < right;
+    case 'greater_than_or_equals':
+      return left >= right;
+    case 'less_than_or_equals':
+      return left <= right;
+    default:
+      console.error(`Unknown condition type: ${operator}`);
+      return false;
+  }
+}
+
 const wtes = {
   // reset logs and context and attempt to execute generated js from blockly
   tryRun: (code, cx) => {
@@ -17,7 +38,7 @@ ${code}`);
     }
     return wtes.logs.reverse();
   },
-  
+
   reset: () => {
     wtes.logs = [];
     wtes.context = {};
@@ -37,50 +58,14 @@ ${code}`);
   SampleSegments,
   SampleEvents,
 
-  // helpers several wtes use
-  isConditionMet: function (item, type, value) {
-    switch (type.toLowerCase()) {
-      case 'equals':
-        return item === value;
-      case 'not_equals':
-        return item !== value;
-      case 'greater_than':
-        return item > value;
-      case 'less_than':
-        return item < value;
-      case 'greater_than_or_equals':
-        return item >= value;
-      case 'lesser_than_or_equals':
-        return item <= value;
-      default:
-        console.error(`Unknown condition type: ${type}`);
-        return false;
-    }
-  },
-
-  arrayMath: (mathType, list) => {
-    switch (mathType) {
-      case 'COUNT':
-        return list.length;
-      case 'MAX':
-        return list.length > 0 ? Math.max(...list) : null;
-      case 'MIN':
-        return list.length > 0 ? Math.min(...list) : null;
-      case 'AVERAGE':
-        return list.length > 0 ? list.reduce((a, b) => a + b, 0) / list.length : null;
-      case 'SUM':
-        return list.length > 0 ? list.reduce((a, b) => a + b, 0) : null;
-      case 'MULTIPLY':
-        return list.length > 0 ? list.reduce((a, b) => a * b, 1) : null;
-      default:
-        return null;
-    }
-  },
-
   ///////////////////////////////////////////////////////
   // wte functions available inside generated code
   // generators/javascript.js block methods call these methods after pulling arguments out of inputs/fields/child blocks/etc
   ///////////////////////////////////////////////////////
+
+  number: (value) => {
+    return wtes.logAndReturn(`number:${value}`, { value }, value);
+  },
 
   context_variable: (context, variableName) => {
     const value = context[variableName];
@@ -104,25 +89,12 @@ ${code}`);
     return wtes.logAndReturn(`wte_error:${name}`, { name }, 'wte not defined');
   },
 
-  add: (...params) => {
-    const result = params.reduce((a, b) => a + b, 0);
-    return wtes.logAndReturn(`add`, { params }, result);
-  },
-
-  subtract: (...params) => {
-    const result = params.reduce((a, b) => a - b);
-    return wtes.logAndReturn(`subtract`, { params }, result);
-  },
-
-  make_array: (...items) => {
-    return wtes.logAndReturn(`make_array`, { items }, items);
-  },
-
-  conditional_number: (condition, trueValue, falseValue) => {
+  conditional_number: (left, operator, right, trueValue, falseValue) => {
+    const condition = isConditionMet(left, operator, right)
     const result = condition ? trueValue : falseValue;
     return wtes.logAndReturn(
       `conditional_number:${condition}`,
-      { condition, trueValue, falseValue },
+      { left, operator, right, condition, trueValue, falseValue },
       result
     );
   },
@@ -193,11 +165,6 @@ ${code}`);
     });
   },
 
-  ratio: (numerator, denominator) => {
-    if (denominator === 0) return 0;
-    return numerator / denominator;
-  },
-
   ratio_condition_true: (array, conditions) => {
     if (!Array.isArray(array) || array.length === 0) return 0;
 
@@ -206,7 +173,7 @@ ${code}`);
       for (const condition of conditions) {
         const { type, value } = condition;
         if (type) {
-          conditionMet = wtes.isConditionMet(item, type, value);
+          conditionMet = isConditionMet(item, type, value);
         }
       }
       return acc + (conditionMet ? 1 : 0);
@@ -229,7 +196,7 @@ ${code}`);
       return_value_proration = 1,
     } = params;
     let adjustedTarget = target * target_proration;
-    let achieved = wtes.isConditionMet(input, target_compare, adjustedTarget);
+    let achieved = isConditionMet(input, target_compare, adjustedTarget);
     let adjustedReturnValue = return_value * return_value_proration;
     return wtes.logAndReturn(
       `target_achieved:${achieved}`,
@@ -248,7 +215,7 @@ ${code}`);
       return_value_proration = 1,
     } = params;
     let adjustedTarget = target * target_proration;
-    let achieved = wtes.isConditionMet(input, target_compare, adjustedTarget);
+    let achieved = isConditionMet(input, target_compare, adjustedTarget);
     console.log('condition met', achieved);
     if (!achieved) {
       return wtes.logAndReturn(`target_achieved_excess:false`, { ...params, adjustedTarget }, 0);
@@ -353,14 +320,65 @@ ${code}`);
     return wtes.logAndReturn(`tier:${min}-${max}`, params, tier);
   },
 
-  array_math: (mathType, list) => {
-    const result = wtes.arrayMath(mathType, list);
-    return wtes.logAndReturn(`array_math:${mathType}`, { mathType, list }, result);
+  _do_math: (mathType, values) => {
+    let operation = mathType?.toLowerCase();
+    let result = null;
+    if (typeof wtes[operation] === 'function') {
+      result = wtes[operation](...values);
+    } else {
+      console.error(`Unknown math type: ${operation}`);
+    }
+    return result;
+  },
+
+  multiply: (...values) => {
+    const result = values.length > 0 ? values.reduce((a, b) => a * b, 1) : null;
+    return wtes.logAndReturn(`multiply`, { values: JSON.stringify(values) }, result);
+  },
+
+  sum: (...values) => {
+    const result = values.length > 0 ? values.reduce((a, b) => a + b, 0) : null;
+    return wtes.logAndReturn(`sum`, { values: JSON.stringify(values) }, result);
+  },
+
+  subtract: (...values) => {
+    const result = values.length > 0 ? values.reduce((a, b) => a - b) : null;
+    return wtes.logAndReturn(`subtract`, { values: JSON.stringify(values) }, result);
+  },
+
+  divide: (...values) => {
+    const result = values.length > 0 ? values.reduce((a, b) => a / b) : null;
+    return wtes.logAndReturn(`divide`, { values: JSON.stringify(values) }, result);
+  },
+
+  min: (...values) => {
+    const result = values.length > 0 ? Math.min(...values) : null;
+    return wtes.logAndReturn(`min`, { values: JSON.stringify(values) }, result);
+  },
+
+  max: (...values) => {
+    const result = values.length > 0 ? Math.max(...values) : null;
+    return wtes.logAndReturn(`max`, { values: JSON.stringify(values) }, result);
+  },
+
+  average: (...values) => {
+    const result = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null;
+    return wtes.logAndReturn(`average`, { values: JSON.stringify(values) }, result);
+  },
+
+  count: (...values) => {
+    const result = values.length;
+    return wtes.logAndReturn(`count`, { values: JSON.stringify(values) }, result);
+  },
+
+  math: (mathType, values) => {
+    const result = wtes._do_math(mathType, values);
+    return wtes.logAndReturn(`math:${mathType}`, { mathType, values: JSON.stringify(values) }, result);
   },
 
   events_math: (mathType, eventType) => {
     const events = SampleEvents.filter((e) => e.type === eventType);
-    const result = wtes.arrayMath(
+    const result = wtes._do_math(
       mathType,
       events.map((e) => e.value)
     );
@@ -377,11 +395,6 @@ ${code}`);
     const result =
       age.toLowerCase() === 'most recent' ? events.slice(-1)[0] : events.slice(0, 1)[0];
     return wtes.logAndReturn(`most_recent_event:${eventType}:${age}`, { age, eventType }, result);
-  },
-
-  multiply: (a, b) => {
-    const result = a * b;
-    return wtes.logAndReturn(`multiply`, { a, b }, result);
   },
 };
 

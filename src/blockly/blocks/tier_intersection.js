@@ -24,7 +24,12 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'tier_intersection',
-      message0: `Tier Intersection\nInput %1\nReturn Value Proration %2\nMin/Max Proration %3\nMin Inclusive %4\nMultiply tier value by input %5`,
+      message0: `Tier Intersection
+Input %1
+Return Value Proration %2
+Min/Max Proration %3
+Min Inclusive %4
+Multiply tier value by input %5`,
       args0: [
         {
           type: 'input_value',

@@ -5,6 +5,8 @@
 */
 import { DistinctEventTypes } from '../mock_data/sample_events.js';
 
+import math_operations from '../math_operations.js';
+
 export default {
   length: 0,
   init: function () {
@@ -13,21 +15,14 @@ export default {
       output: 'Number',
       colour: 65,
 
-      message0: '%1 of %2 events\nthat match filters [...]',
+      message0: '%1 of %2 event values\nthat match filters [...]',
       args0: [
         // type of math to run
         {
           type: 'field_dropdown',
           name: 'MATH_TYPE',
-          options: [
-            ['count', 'COUNT'],
-            ['min', 'MIN'],
-            ['max', 'MAX'],
-            ['average', 'AVERAGE'],
-            ['sum', 'SUM'],
-            ['multiply', 'MULTIPLY'], // multiply seems awkward here
-          ],
-          value: 'COUNT',
+          options: math_operations.map(op => [op, op]),
+          value: 'sum',
         },
 
         // event type to filter for

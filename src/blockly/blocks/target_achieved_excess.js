@@ -17,7 +17,7 @@
     Context: Achievement status and return value
 */
 
-import compare_options from '../mock_data/compare_options';
+import compare_options from '../compare_options';
 
 export default {
   init: function () {

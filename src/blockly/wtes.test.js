@@ -3,7 +3,7 @@ import wtes from './wtes.js';
 import SampleEvents from './mock_data/sample_events.js';
 
 describe('wte tests', () => {
-  const arrayMathTests = [
+  const mathTests = [
     { mathType: 'COUNT', list: [1, 2, 3], expected: 3 },
     { mathType: 'MAX', list: [1, 2, 3], expected: 3 },
     { mathType: 'MIN', list: [1, 2, 3], expected: 1 },
@@ -15,9 +15,9 @@ describe('wte tests', () => {
     { mathType: 'UNKNOWN', list: [1, 2, 3], expected: null }, // edge case
   ];
 
-  arrayMathTests.forEach(({ mathType, list, expected }) => {
-    it(`arrayMath ${mathType} of [${list}] should be ${expected}`, () => {
-      const result = wtes.arrayMath(mathType, list);
+  mathTests.forEach(({ mathType, list, expected }) => {
+    it(`math ${mathType} of [${list}] should be ${expected}`, () => {
+      const result = wtes.math(mathType, list);
       expect(result).toBe(expected);
     });
   });
@@ -40,8 +40,8 @@ describe('wte tests', () => {
     expect(result).toBe('wte not defined');
   });
 
-  it('should add numbers correctly', () => {
-    const result = wtes.add(1, 2, 3, 4);
+  it('should sum numbers correctly', () => {
+    const result = wtes.sum(1, 2, 3, 4);
     expect(result).toBe(10);
   });
 
@@ -50,15 +50,11 @@ describe('wte tests', () => {
     expect(result).toBe(5);
   });
 
-  it('should make array correctly', () => {
-    const result = wtes.make_array(1, 2, 3);
-    expect(result).toEqual([1, 2, 3]);
-  });
-
   it('should return conditional number correctly', () => {
-    const resultTrue = wtes.conditional_number(true, 1, 0);
+    const resultTrue = wtes.conditional_number(1, 'equals', 1, 1, 0);
     expect(resultTrue).toBe(1);
-    const resultFalse = wtes.conditional_number(false, 1, 0);
+
+    const resultFalse = wtes.conditional_number(2, 'equals', 1, 1, 0);
     expect(resultFalse).toBe(0);
   });
 
@@ -80,8 +76,12 @@ describe('wte tests', () => {
   });
 
   it('should calculate ratio correctly', () => {
-    expect(wtes.ratio(10, 2)).toBe(5);
-    expect(wtes.ratio(10, 0)).toBe(0); // edge case
+    expect(wtes.divide(10, 2)).toBe(5);
+    expect(wtes.divide(10, 2, 2)).toBe(2.5);
+    expect(wtes.divide(10, 0)).toBe(Infinity);
+    expect(wtes.divide(10, 4, 0)).toBe(Infinity);
+    expect(wtes.divide(0, 4)).toBe(0);
+    expect(wtes.divide(0, 4, 4)).toBe(0);
   });
 
   it('should calculate ratio_condition_true correctly', () => {

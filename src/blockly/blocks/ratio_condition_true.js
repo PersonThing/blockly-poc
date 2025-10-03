@@ -16,7 +16,7 @@
     Context: count_matching, total_count, null_found flag
 */
 
-import compare_options from '../mock_data/compare_options';
+import compare_options from '../compare_options';
 
 export default {
   init: function () {

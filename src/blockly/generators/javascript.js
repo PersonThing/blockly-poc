@@ -1,87 +1,85 @@
 import { javascriptGenerator, Order } from 'blockly/javascript';
 import sample_segments from '../mock_data/sample_segments';
+import math_operations from '../math_operations.js';
 
 // for simplicity, this generator should only handle values out of field values / inputs / child blocks / etc
 // and then calling a helper function in wtes.<block_name> passing said values
 
-javascriptGenerator.forBlock['context_variable'] = function (block, generator) {
+javascriptGenerator.forBlock.number = function (block, generator) {
+  const value = Number(block.getFieldValue('VALUE'));
+  return [`wtes.number(${value})`, Order.ATOMIC];
+};
+
+javascriptGenerator.forBlock.context_variable = function (block, generator) {
   const variableName = block.getFieldValue('VARIABLE_NAME') || '';
   return [`wtes.context_variable(context, '${variableName}')`, Order.NONE];
 };
 
-javascriptGenerator.forBlock['define_wte'] = function (block, generator) {
+javascriptGenerator.forBlock.define_wte = function (block, generator) {
   const name = block.getFieldValue('NAME');
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
   return `wtes.define_wte('${name}', context => ${output});`;
 };
 
-javascriptGenerator.forBlock['call_wte'] = function (block, generator) {
+javascriptGenerator.forBlock.call_wte = function (block, generator) {
   const name = block.getFieldValue('NAME');
   return [`wtes.call_wte('${name}', context)`, Order.NONE];
 };
 
-javascriptGenerator.forBlock['add'] = function (block, generator) {
+const makeMathGenerator = (operation) => {
+  return function (block, generator) {
+    const values = [];
+    for (let i = 0; i < block.length; i++) {
+      const inputName = `value_${i}`;
+      const value = generator.valueToCode(block, inputName, 0) || 'null';
+      values.push(value);
+    }
+    return [`wtes.${operation}(${values.flatMap((v) => v).join(', ')})`, Order.FUNCTION_CALL];
+  };
+};
+
+math_operations.forEach((op) => javascriptGenerator.forBlock[op] = makeMathGenerator(op));
+
+javascriptGenerator.forBlock.math = function (block, generator) {
+  const mathType = block.getFieldValue('MATH_TYPE');
   const values = [];
   for (let i = 0; i < block.length; i++) {
     const inputName = `value_${i}`;
     const value = generator.valueToCode(block, inputName, 0) || 'null';
     values.push(value);
   }
-  return [`wtes.add(${values.flatMap((v) => v).join(', ')})`, Order.ADDITION];
+  return [`wtes.math('${mathType}', [${values.flatMap((v) => v).join(', ')}])`, Order.FUNCTION_CALL];
 };
 
-javascriptGenerator.forBlock['subtract'] = function (block, generator) {
-  const values = [];
-  for (let i = 0; i < block.length; i++) {
-    const inputName = `value_${i}`;
-    const value = generator.valueToCode(block, inputName, 0) || 'null';
-    values.push(value);
-  }
-  return [`wtes.subtract(${values.flatMap((v) => v).join(', ')})`, Order.SUBTRACTION];
-};
-
-javascriptGenerator.forBlock['make_array'] = function (block, generator) {
-  const values = [];
-  for (let i = 0; i < block.length; i++) {
-    const inputName = `value_${i}`;
-    const value = generator.valueToCode(block, inputName, 0) || 'null';
-    values.push(value);
-  }
-  return [`wtes.make_array([${values.join(',')})`, Order.NONE];
-};
-
-javascriptGenerator.forBlock['array_math'] = function (block, generator) {
+javascriptGenerator.forBlock.array_math = function (block, generator) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
-  return [`wtes.array_math('${mathType}', ${list})`, Order.FUNCTION_CALL];
+  return [`wtes.math('${mathType}', ${list})`, Order.FUNCTION_CALL];
 };
 
-javascriptGenerator.forBlock['events_math'] = function (block, generator) {
+javascriptGenerator.forBlock.events_math = function (block, generator) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const eventType = block.getFieldValue('EVENT_TYPE');
   return [`wtes.events_math('${mathType}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
-javascriptGenerator.forBlock['most_recent_events'] = function (block, generator) {
+javascriptGenerator.forBlock.most_recent_events = function (block, generator) {
   const age = block.getFieldValue('AGE');
   const eventType = block.getFieldValue('EVENT_TYPE');
   return [`wtes.most_recent_events('${age}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
-javascriptGenerator.forBlock['multiply'] = function (block, generator) {
-  const a = generator.valueToCode(block, 'A', Order.NONE) || '0';
-  const b = generator.valueToCode(block, 'B', Order.NONE) || '0';
-  return [`wtes.multiply(${a}, ${b})`, Order.MULTIPLICATION];
-};
+javascriptGenerator.forBlock.conditional_number = function (block, generator) {
+  const left = generator.valueToCode(block, 'LEFT', Order.NONE) || '0';
+  const operator = block.getFieldValue('OPERATOR');
+  const right = generator.valueToCode(block, 'RIGHT', Order.NONE) || '0';
 
-javascriptGenerator.forBlock['conditional_number'] = function (block, generator) {
-  const condition = generator.valueToCode(block, 'CONDITION', Order.NONE) || 'false';
   const trueValue = generator.valueToCode(block, 'TRUE_VALUE', Order.NONE) || '0';
   const falseValue = generator.valueToCode(block, 'FALSE_VALUE', Order.NONE) || '0';
-  return [`wtes.conditional_number(${condition}, ${trueValue}, ${falseValue})`, Order.CONDITIONAL];
+  return [`wtes.conditional_number(${left}, '${operator}', ${right}, ${trueValue}, ${falseValue})`, Order.CONDITIONAL];
 };
 
-javascriptGenerator.forBlock['recurrence'] = function (block, generator) {
+javascriptGenerator.forBlock.recurrence = function (block, generator) {
   const recurrence = {
     frequency: block.getFieldValue('FREQUENCY'),
     interval: block.getFieldValue('INTERVAL'),
@@ -92,7 +90,7 @@ javascriptGenerator.forBlock['recurrence'] = function (block, generator) {
   return [JSON.stringify(recurrence), Order.NONE];
 };
 
-javascriptGenerator.forBlock['offset'] = function (block, generator) {
+javascriptGenerator.forBlock.offset = function (block, generator) {
   const offsetGrain = block.getFieldValue('OFFSET_GRAIN');
   const offsetAmount = block.getFieldValue('OFFSET_AMOUNT');
   const durationGrain = block.getFieldValue('DURATION_GRAIN');
@@ -109,7 +107,7 @@ javascriptGenerator.forBlock['offset'] = function (block, generator) {
   return [JSON.stringify(offsetValue), Order.NONE];
 };
 
-javascriptGenerator.forBlock['recurrence_frame'] = function (block, generator) {
+javascriptGenerator.forBlock.recurrence_frame = function (block, generator) {
   const recurrence = generator.valueToCode(block, 'RECURRENCE', Order.NONE) || 'null';
   const offset = generator.valueToCode(block, 'OFFSET', Order.NONE) || 'null';
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
@@ -120,7 +118,7 @@ javascriptGenerator.forBlock['recurrence_frame'] = function (block, generator) {
   ];
 };
 
-javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
+javascriptGenerator.forBlock.segment_frame = function (block, generator) {
   let name = block.getFieldValue('NAME');
   name = name ? `'${name}'` : 'null';
   let segmentId = block.getFieldValue('SEGMENT_ID');
@@ -130,13 +128,7 @@ javascriptGenerator.forBlock['segment_frame'] = function (block, generator) {
   return [`wtes.segment_frame(context, ${name}, ${JSON.stringify(segment)}, (context) => ${output})`, Order.NONE];
 };
 
-javascriptGenerator.forBlock['ratio'] = function (block, generator) {
-  const numerator = generator.valueToCode(block, 'NUMERATOR', Order.NONE) || '0';
-  const denominator = generator.valueToCode(block, 'DENOMINATOR', Order.NONE) || '1';
-  return [`wtes.ratio(${numerator}, ${denominator})`, Order.FUNCTION_CALL];
-};
-
-javascriptGenerator.forBlock['ratio_condition_true'] = function (block, generator) {
+javascriptGenerator.forBlock.ratio_condition_true = function (block, generator) {
   const z = generator.valueToCode(block, 'Z', Order.NONE) || '[]';
 
   // TODO: handle multiple conditions
@@ -150,7 +142,7 @@ javascriptGenerator.forBlock['ratio_condition_true'] = function (block, generato
   return [`wtes.ratio_condition_true(${z}, ${JSON.stringify(conditions)})`, Order.FUNCTION_CALL];
 };
 
-javascriptGenerator.forBlock['target_achieved'] = function (block, generator) {
+javascriptGenerator.forBlock.target_achieved = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || 'null';
   const target = generator.valueToCode(block, 'TARGET', Order.NONE) || 'null';
   const targetCompare = block.getFieldValue('TARGET_COMPARE');
@@ -172,7 +164,7 @@ javascriptGenerator.forBlock['target_achieved'] = function (block, generator) {
   ];
 };
 
-javascriptGenerator.forBlock['target_achieved_excess'] = function (block, generator) {
+javascriptGenerator.forBlock.target_achieved_excess = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || 'null';
   const target = generator.valueToCode(block, 'TARGET', Order.NONE) || 'null';
   const targetCompare = block.getFieldValue('TARGET_COMPARE');
@@ -204,7 +196,7 @@ const getTiersFromBlock = (block, generator) => {
   return tiers;
 };
 
-javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) {
+javascriptGenerator.forBlock.tier_intersection = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
   const returnValueProration = generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
   const minMaxProration = generator.valueToCode(block, 'MIN_MAX_PRORATION', Order.NONE) || '0';
@@ -226,7 +218,7 @@ javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) 
   ];
 };
 
-javascriptGenerator.forBlock['tier_overlap_multiply'] = function (block, generator) {
+javascriptGenerator.forBlock.tier_overlap_multiply = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
   const returnValueProration = generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
   const minMaxProration = generator.valueToCode(block, 'MIN_MAX_PRORATION', Order.NONE) || '0';
@@ -244,7 +236,7 @@ javascriptGenerator.forBlock['tier_overlap_multiply'] = function (block, generat
   ];
 };
 
-javascriptGenerator.forBlock['tier'] = function (block, generator) {
+javascriptGenerator.forBlock.tier = function (block, generator) {
   const min = Number(block.getFieldValue('MIN'));
   const max = Number(block.getFieldValue('MAX'));
   const value = generator.valueToCode(block, 'VALUE', Order.NONE) || 'null';

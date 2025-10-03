@@ -1,5 +1,7 @@
 import * as Blockly from 'blockly';
 
+import math_operations from '../math_operations.js';
+
 const jsonGenerator = new Blockly.Generator('JSON');
 
 jsonGenerator.fromWorkspace = function (workspace) {
@@ -27,23 +29,9 @@ jsonGenerator.fromBlock = function (block) {
   }
 };
 
-// built-in stuff
-jsonGenerator.math_number = function (block) {
-  const num = Number(block.getFieldValue('NUM'));
-  return `{"type": "number", "value": ${isNaN(num) ? 0 : num} }`;
-};
-
-jsonGenerator.math_on_list = function (block) {
-  const operator = block.getFieldValue('OP');
-  const list = this.fromBlock(block.getInputTargetBlock('LIST'));
-  return `{"type":"math_on_list", "operator":"${operator}", "list":${list}}`;
-};
-
-jsonGenerator.logic_compare = function (block) {
-  const operator = block.getFieldValue('OP');
-  const left = this.fromBlock(block.getInputTargetBlock('A'));
-  const right = this.fromBlock(block.getInputTargetBlock('B'));
-  return `{"type":"logic_compare", "operator":"${operator}", "left":${left}, "right":${right}}`;
+jsonGenerator.number = function (block) {
+  const value = Number(block.getFieldValue('VALUE'));
+  return `{"type": "number", "value": ${isNaN(value) ? 0 : value} }`;
 };
 
 jsonGenerator.context_variable = function (block) {
@@ -51,27 +39,13 @@ jsonGenerator.context_variable = function (block) {
   return `{"type":"context_variable", "value": "${variable}"}`;
 };
 
-jsonGenerator.add = function (block) {
-  const values = [];
-  block.getChildren(true).forEach((block) => {
-    values.push(this.fromBlock(block));
-  });
-  return `{"type":"add", "values": [${values.join(',')}]}`;
-};
-
-jsonGenerator.subtract = function (block) {
-  const values = [];
-  block.getChildren().forEach((block) => {
-    values.push(this.fromBlock(block));
-  });
-  return `{"type":"subtract", "values": [${values.join(',')}]}`;
-};
-
 jsonGenerator.conditional_number = function (block) {
-  const condition = this.fromBlock(block.getInputTargetBlock('CONDITION'));
+  const left = this.fromBlock(block.getInputTargetBlock('LEFT'));
+  const operator = block.getFieldValue('OPERATOR');
+  const right = this.fromBlock(block.getInputTargetBlock('RIGHT'));
   const trueValue = this.fromBlock(block.getInputTargetBlock('TRUE_VALUE'));
   const falseValue = this.fromBlock(block.getInputTargetBlock('FALSE_VALUE'));
-  return `{"type":"conditional_number", "value":{"if":${condition}, "then":${trueValue}, "else":${falseValue}}}`;
+  return `{"type":"conditional_number", "left":${left}, "operator":"${operator}", "right":${right}, "true_value":${trueValue}, "false_value":${falseValue}}`;
 };
 
 jsonGenerator.recurrence = function (block) {
@@ -156,6 +130,29 @@ jsonGenerator.call_wte = function (block) {
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
 
+const makeMathGenerator = (operation) => {
+  return function (block) {
+    const mathType = block.getFieldValue('MATH_TYPE');
+    const values = [];
+    for (let i = 0; i < block.length; i++) {
+      const valueBlock = block.getInputTargetBlock(`value_${i}`);
+      values.push(this.fromBlock(valueBlock));
+    }
+    return `{"type":"${operation}", "values":[${values.join(',')}]}`;
+  };
+};
+math_operations.forEach((op) => jsonGenerator[op] = makeMathGenerator(op));
+
+jsonGenerator.math = function (block) {
+  const mathType = block.getFieldValue('MATH_TYPE');
+  const values = [];
+  for (let i = 0; i < block.length; i++) {
+    const valueBlock = block.getInputTargetBlock(`value_${i}`);
+    values.push(this.fromBlock(valueBlock));
+  }
+  return `{"type":"math", "math_type":"${mathType}", "values":[${values.join(',')}]}`;
+};
+
 jsonGenerator.array_math = function (block) {
   const mathType = block.getFieldValue('MATH_TYPE');
   const list = this.fromBlock(block.getInputTargetBlock('LIST'));
@@ -173,18 +170,6 @@ jsonGenerator.most_recent_events = function (block) {
   const age = Number(block.getFieldValue('AGE'));
   const eventType = block.getFieldValue('EVENT_TYPE');
   return `{"type":"most_recent_events", "age":"${age}", "event_type":"${eventType}"}`;
-};
-
-jsonGenerator.multiply = function (block) {
-  const a = this.fromBlock(block.getInputTargetBlock('A'));
-  const b = this.fromBlock(block.getInputTargetBlock('B'));
-  return `{"type":"multiply", "a":${a}, "b":${b}}`;
-};
-
-jsonGenerator.ratio = function (block) {
-  const numerator = this.fromBlock(block.getInputTargetBlock('NUMERATOR'));
-  const denominator = this.fromBlock(block.getInputTargetBlock('DENOMINATOR'));
-  return `{"type":"ratio", "numerator":${numerator}, "denominator":${denominator}}`;
 };
 
 jsonGenerator.ratio_condition_true = function (block) {

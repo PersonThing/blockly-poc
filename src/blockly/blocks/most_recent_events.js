@@ -16,7 +16,7 @@ export default {
       output: 'Number',
       colour: 65,
 
-      message0: '%1 %2 event\nthat match filters [...]',
+      message0: '%1 %2 event value\nthat match filters [...]',
       args0: [
         // whether to get most recent or oldest
         {
