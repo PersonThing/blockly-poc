@@ -96,11 +96,32 @@ export const toolbox = {
         {
           kind: 'block',
           type: 'tier_intersection',
-        },
-
-        {
-          kind: 'block',
-          type: 'tier_intersection_multiply',
+          inputs: {
+            INPUT: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+            RETURN_VALUE_PRORATION: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+            MIN_MAX_PRORATION: {
+              shadow: {
+                type: 'math_number',
+                fields: {
+                  NUM: 1,
+                },
+              },
+            },
+          },
         },
 
         {

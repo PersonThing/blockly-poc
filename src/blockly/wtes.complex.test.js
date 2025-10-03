@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import wtes from './wtes.js';
-import { run } from 'svelte/legacy';
 
 describe('wte generated model tests', () => {
   const complexModelTests = [
@@ -54,17 +53,22 @@ describe('wte generated model tests', () => {
 
     // random conditional_number + multiply + add
     {
-      run: (context) => wtes.conditional_number(wtes.context_variable(context, 'value') > 5, wtes.multiply(3, 10), wtes.add(1, 2, 3, 4)),
+      run: (context) =>
+        wtes.conditional_number(
+          wtes.context_variable(context, 'value') > 5,
+          wtes.multiply(3, 10),
+          wtes.add(1, 2, 3, 4)
+        ),
       executions: [
         { context: { value: 10 }, expected: 30 }, // value more than 5, so should get 3 * 10
         { context: { value: 3 }, expected: 10 }, // value less than 5, so should get 1 + 2 + 3 + 4
       ],
-    }
+    },
   ];
 
   complexModelTests.forEach((test, index) => {
-    it(`should execute complex model test ${index + 1} correctly`, () => {
-      test.executions.forEach((execution) => {
+    test.executions.forEach((execution) => {
+      it(`should execute complex model test ${index + 1} correctly`, () => {
         wtes.reset();
         wtes.context = execution.context;
         const result = test.run(wtes.context);

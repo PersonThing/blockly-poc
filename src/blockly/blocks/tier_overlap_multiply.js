@@ -46,14 +46,16 @@ export default {
           check: 'Number',
         },
         {
-          type: 'field_number',
+          type: 'input_value',
           name: 'RETURN_VALUE_PRORATION',
           value: 1,
+          check: 'Number',
         },
         {
-          type: 'field_number',
+          type: 'input_value',
           name: 'MIN_MAX_PRORATION',
           value: 1,
+          check: 'Number',
         },
       ],
       output: 'Number',

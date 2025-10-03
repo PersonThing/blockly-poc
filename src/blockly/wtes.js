@@ -278,6 +278,7 @@ ${code}`);
       return_value_proration = 1,
       min_max_proration = 1,
       min_inclusive = false,
+      multiply_by_input = false,
     } = params;
     let tier = null;
     for (const t of tiers) {
@@ -305,20 +306,13 @@ ${code}`);
     }
 
     let tierValue = tier.value * return_value_proration * min_max_proration;
+    if (multiply_by_input) {
+      tierValue = tierValue * input;
+    }
     return wtes.logAndReturn(
       `tier_intersection:${tier.min}-${tier.max}`,
       { ...params, tier, tierValue },
       tierValue
-    );
-  },
-
-  tier_intersection_multiply: (params) => {
-    const tierValue = wtes.tier_intersection(params);
-    const result = tierValue * params.input;
-    return wtes.logAndReturn(
-      `tier_intersection_multiply`,
-      { ...params, tierValue, result },
-      result
     );
   },
 
@@ -355,7 +349,6 @@ ${code}`);
 
   tier: (params) => {
     const { min, max, value } = params;
-    console.log('tier params', params);
     const tier = { min, max, value };
     return wtes.logAndReturn(`tier:${min}-${max}`, params, tier);
   },

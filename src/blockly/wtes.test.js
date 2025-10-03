@@ -163,7 +163,7 @@ describe('wte tests', () => {
     expect(result).toBe(0); // no tier matched
   });
 
-  it('should determine tier_intersection_multiply correctly', () => {
+  it('should determine tier_intersection multiply_by_input correctly', () => {
     const tiers = [
       { min: 0, max: 10, value: 1 },
       { min: 10, max: 20, value: 2 },
@@ -176,28 +176,29 @@ describe('wte tests', () => {
       return_value_proration: 1,
       min_max_proration: 1,
       min_inclusive: false,
+      multiply_by_input: true,
     };
-    let result = wtes.tier_intersection_multiply(params);
+    let result = wtes.tier_intersection(params);
     expect(result).toBe(5); // tier 1 * input 5
 
     params.input = 10;
-    result = wtes.tier_intersection_multiply(params);
+    result = wtes.tier_intersection(params);
     expect(result).toBe(10); // tier 1 * input 10
 
     params.input = 15;
-    result = wtes.tier_intersection_multiply(params);
+    result = wtes.tier_intersection(params);
     expect(result).toBe(30); // tier 2 * input 15
 
     params.input = 25;
-    result = wtes.tier_intersection_multiply(params);
+    result = wtes.tier_intersection(params);
     expect(result).toBe(75); // tier 3 * input 25
 
     params.input = 30;
-    result = wtes.tier_intersection_multiply(params);
+    result = wtes.tier_intersection(params);
     expect(result).toBe(90); // tier 3 * input 30
 
     params.input = 35;
-    result = wtes.tier_intersection_multiply(params);
+    result = wtes.tier_intersection(params);
     expect(result).toBe(0); // no tier matched
   });
 

@@ -206,9 +206,10 @@ const getTiersFromBlock = (block, generator) => {
 
 javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
-  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const returnValueProration = generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
+  const minMaxProration = generator.valueToCode(block, 'MIN_MAX_PRORATION', Order.NONE) || '0';
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
+  const multiplyByInput = block.getFieldValue('MULTIPLY_BY_INPUT') === 'TRUE';
   const tiers = getTiersFromBlock(block, generator);
   return [
     `wtes.tier_intersection({
@@ -218,27 +219,8 @@ javascriptGenerator.forBlock['tier_intersection'] = function (block, generator) 
   ],
   return_value_proration: ${returnValueProration},
   min_max_proration: ${minMaxProration},
-  min_inclusive: ${minInclusive}
-})`,
-    Order.FUNCTION_CALL,
-  ];
-};
-
-javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, generator) {
-  const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
-  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
-  const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
-  const tiers = getTiersFromBlock(block, generator);
-  return [
-    `wtes.tier_intersection_multiply({
-  input: ${input},
-  tiers: [
-    ${tiers.join(',\n    ')}
-  ],
-  return_value_proration: ${returnValueProration},
-  min_max_proration: ${minMaxProration},
-  min_inclusive: ${minInclusive}
+  min_inclusive: ${minInclusive},
+  multiply_by_input: ${multiplyByInput}
 })`,
     Order.FUNCTION_CALL,
   ];
@@ -246,8 +228,8 @@ javascriptGenerator.forBlock['tier_intersection_multiply'] = function (block, ge
 
 javascriptGenerator.forBlock['tier_overlap_multiply'] = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const returnValueProration = block.getFieldValue('RETURN_VALUE_PRORATION');
-  const minMaxProration = block.getFieldValue('MIN_MAX_PRORATION');
+  const returnValueProration = generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
+  const minMaxProration = generator.valueToCode(block, 'MIN_MAX_PRORATION', Order.NONE) || '0';
   const tiers = getTiersFromBlock(block, generator);
   return [
     `wtes.tier_overlap_multiply({

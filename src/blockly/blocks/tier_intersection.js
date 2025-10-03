@@ -24,7 +24,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'tier_intersection',
-      message0: `Tier Intersection\nInput %1\nReturn Value Proration %2\nMin/Max Proration %3\nMin Inclusive %4`,
+      message0: `Tier Intersection\nInput %1\nReturn Value Proration %2\nMin/Max Proration %3\nMin Inclusive %4\nMultiply tier value by input %5`,
       args0: [
         {
           type: 'input_value',
@@ -32,18 +32,25 @@ export default {
           check: 'Number',
         },
         {
-          type: 'field_number',
+          type: 'input_value',
           name: 'RETURN_VALUE_PRORATION',
           value: 1,
+          check: 'Number',
         },
         {
-          type: 'field_number',
+          type: 'input_value',
           name: 'MIN_MAX_PRORATION',
           value: 1,
+          check: 'Number',
         },
         {
           type: 'field_checkbox',
           name: 'MIN_INCLUSIVE',
+          value: true,
+        },
+        {
+          type: 'field_checkbox',
+          name: 'MULTIPLY_BY_INPUT',
           value: true,
         },
       ],

@@ -58,9 +58,6 @@ Blockly.Blocks['target_achieved_excess'] = target_achieved_excess;
 import tier_intersection from "./blocks/tier_intersection.js";
 Blockly.Blocks['tier_intersection'] = tier_intersection;
 
-import tier_intersection_multiply from "./blocks/tier_intersection_multiply.js";
-Blockly.Blocks['tier_intersection_multiply'] = tier_intersection_multiply;
-
 import tier_overlap_multiply from "./blocks/tier_overlap_multiply.js";
 Blockly.Blocks['tier_overlap_multiply'] = tier_overlap_multiply;
 
