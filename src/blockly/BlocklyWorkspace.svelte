@@ -42,11 +42,11 @@
 
       {#each filteredOutputLogs as log}
         <div class="logEntry">
-          <label>{log.label}</label>
+          <pre class="label">{log.label}</pre>
           {#if log.meta}
-          <pre class="logMeta">{JSON.stringify(log.meta, null, 2)}</pre>
+          <pre class="meta">{JSON.stringify(log.meta, null, 2)}</pre>
           {/if}
-          <pre>{JSON.stringify(log.result, null, 2)}</pre>
+          <pre class="value">{JSON.stringify(log.result, null, 2)}</pre>
         </div>
       {/each}
     </div>

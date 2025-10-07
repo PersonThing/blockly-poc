@@ -1,8 +1,8 @@
 import * as Blockly from 'blockly/core';
 import './blocks/FieldTextButton.js';
-import { define_wte, call_wte } from './blocks/custom_wte.svelte.js';
-Blockly.Blocks['call_wte'] = call_wte;
-Blockly.Blocks['define_wte'] = define_wte;
+import { define, call } from './blocks/custom_wte.svelte.js';
+Blockly.Blocks['call'] = call;
+Blockly.Blocks['define'] = define;
 
 import array_math from './blocks/array_math.js';
 Blockly.Blocks['array_math'] = array_math;

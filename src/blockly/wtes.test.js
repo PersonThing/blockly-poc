@@ -22,22 +22,36 @@ describe('wte tests', () => {
     });
   });
 
-  it('should define and call a wte correctly', () => {
-    const wteName = 'test_wte';
-    const outputCallback = (context) => {
-      return context.value * 2;
-    };
+  it('should define and call a wte correctly, same context uses cache', () => {
+    wtes.reset();
 
-    wtes.define_wte(wteName, outputCallback);
+    const wteName = 'test_wte';
+    const outputCallback = (context) => wtes.multiply(context.value, 2);
+    wtes.define(wteName, outputCallback);
 
     const contextOverrides = { value: 5 };
-    const result = wtes.call_wte(wteName, contextOverrides);
+    const result = wtes.call(wteName, contextOverrides);
     expect(result).toBe(10);
+
+    // test caching
+    expect(wtes.logs.length).toBe(3); // define + call + multiply
+
+    // subsequent calls with diff context should get diff result
+    const contextOverrides2 = { value: 10 };
+    const result2 = wtes.call(wteName, contextOverrides2);
+    expect(result2).toBe(20);
+
+    expect(wtes.logs.length).toBe(5); // + 2 more logs for call and multiply
+
+    // calling again with first context should return cached result without adding new logs
+    const result3 = wtes.call(wteName, contextOverrides);
+    expect(result3).toBe(10);
+    expect(wtes.logs.length).toBe(6); // + only 1 more log for call, multiply not called again because result was cached
   });
 
   it('should return error when calling undefined wte', () => {
-    const result = wtes.call_wte('undefined_wte', {});
-    expect(result).toBe('wte not defined');
+    const result = wtes.call('undefined_wte', {});
+    expect(result).toBe('error: wte not defined');
   });
 
   it('should sum numbers correctly', () => {

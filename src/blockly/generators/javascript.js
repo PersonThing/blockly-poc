@@ -15,15 +15,15 @@ javascriptGenerator.forBlock.context_variable = function (block, generator) {
   return [`wtes.context_variable(context, '${variableName}')`, Order.NONE];
 };
 
-javascriptGenerator.forBlock.define_wte = function (block, generator) {
+javascriptGenerator.forBlock.define = function (block, generator) {
   const name = block.getFieldValue('NAME');
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
-  return `wtes.define_wte('${name}', context => ${output});`;
+  return `wtes.define('${name}', context => ${output});`;
 };
 
-javascriptGenerator.forBlock.call_wte = function (block, generator) {
+javascriptGenerator.forBlock.call = function (block, generator) {
   const name = block.getFieldValue('NAME');
-  return [`wtes.call_wte('${name}', context)`, Order.NONE];
+  return [`wtes.call('${name}', context)`, Order.NONE];
 };
 
 const makeMathGenerator = (operation) => {

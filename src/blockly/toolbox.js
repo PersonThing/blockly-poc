@@ -24,11 +24,11 @@ export const toolbox = {
       contents: [
         {
           kind: 'block',
-          type: 'define_wte',
+          type: 'define',
         },
         {
           kind: 'block',
-          type: 'call_wte',
+          type: 'call',
         },
       ],
     },

@@ -42,15 +42,23 @@ ${code}`);
   reset: () => {
     wtes.logs = [];
     wtes.context = {};
+    wtes.wteCache = {};
   },
 
   // execution context
   context: {},
 
+  // wteCache - custom defined wtes cache the result for a given context to avoid re-computation
+  wteCache: {},
+
   // logging helpers
   logs: [],
+  logIndentLevel: 0,
   logAndReturn: (label, meta, result) => {
-    wtes.logs.push({ label, meta, result });
+    wtes.logs.push({ 
+      label: `${'  '.repeat(wtes.logIndentLevel)}${label}`, 
+        meta, 
+        result });
     return result;
   },
 
@@ -74,19 +82,28 @@ ${code}`);
 
   wteDefinitions: {},
 
-  define_wte: (name, outputCallback) => {
+  define: (name, outputCallback) => {
     wtes.wteDefinitions[name] = outputCallback;
-    wtes.logAndReturn(`define_wte:${name}`, { name, func: outputCallback.toString() }, 'defined');
+    wtes.logAndReturn(`define:${name}`, { name, func: outputCallback.toString() }, 'defined');
   },
 
-  call_wte: (name, contextOverrides) => {
+  call: (name, contextOverrides) => {
     const wteFunc = wtes.wteDefinitions[name];
     if (wteFunc) {
       const context = { ...contextOverrides };
-      return wtes.logAndReturn(`call_wte:${name}`, null, wteFunc(context));
+      
+      // result is cached for reuse when same context is used
+      const cacheKey = JSON.stringify({ name, context });
+      if (!wtes.wteCache.hasOwnProperty(cacheKey)) {
+        wtes.logIndentLevel++;
+        wtes.wteCache[cacheKey] = wteFunc(context);
+        wtes.logIndentLevel--;
+      }
+      const result = wtes.wteCache[cacheKey];
+      return wtes.logAndReturn(`call:${name}`, null, result);
     }
     console.error(`No WTE defined with name ${name}`);
-    return wtes.logAndReturn(`wte_error:${name}`, { name }, 'wte not defined');
+    return wtes.logAndReturn(`call:${name}`, { name }, 'error: wte not defined');
   },
 
   conditional_number: (left, operator, right, trueValue, falseValue) => {
@@ -402,8 +419,8 @@ ${code}`);
 dummy calls to make sure tree-shaking doesn't happen
 */
 wtes.context_variable({}, 'testVar');
-wtes.define_wte('test', (context) => 42);
-wtes.call_wte('test', {});
+wtes.define('test', (context) => 42);
+wtes.call('test', {});
 delete wtes.wteDefinitions['test'];
 
 export default wtes;

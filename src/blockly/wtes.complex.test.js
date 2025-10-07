@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import wtes from './wtes.js';
 
-const jacksonContext = {
+const sampleContext = {
   aamc_assistant_prof_comp_median: 321887,
   aamc_associate_prof_comp_median: 384555,
   academic_service_time_dollars: 0,
@@ -28,7 +28,7 @@ const jacksonContext = {
   sc_median_benchmark: 412390,
 };
 
-const jacksonComponentWTEs = {
+const sampleComponentWTEs = {
   clinical_base: (context) =>
     wtes.sum(
       wtes.multiply(
@@ -172,45 +172,45 @@ describe('wte complex model tests', () => {
     },
 
     {
-      description: 'jackson clinical_base',
-      run: jacksonComponentWTEs.clinical_base,
+      description: 'sample clinical_base',
+      run: sampleComponentWTEs.clinical_base,
       executions: [
         {
-          context: jacksonContext,
+          context: sampleContext,
           expected: 268053.5,
         },
       ],
     },
 
     {
-      description: 'jackson academic_base',
-      run: jacksonComponentWTEs.academic_base,
+      description: 'sample academic_base',
+      run: sampleComponentWTEs.academic_base,
       executions: [
         {
-          context: jacksonContext,
+          context: sampleContext,
           expected: 134594,
         },
       ],
     },
 
     {
-      description: 'jackson clinical_incentive',
-      run: jacksonComponentWTEs.clinical_incentive,
+      description: 'sample clinical_incentive',
+      run: sampleComponentWTEs.clinical_incentive,
       executions: [
         {
-          context: jacksonContext,
+          context: sampleContext,
           expected: 38365.6,
         },
         {
           context: {
-            ...jacksonContext,
+            ...sampleContext,
             jup_cfte: 0.1,
           },
           expected: 60042.164,
         },
         {
           context: {
-            ...jacksonContext,
+            ...sampleContext,
             prior_year_rvu_total: 4000,
             cfte_adjusted_rvu_50: 4001,
           },
@@ -220,16 +220,16 @@ describe('wte complex model tests', () => {
     },
 
     {
-      description: 'jackson quality_incentive',
-      run: jacksonComponentWTEs.quality_incentive,
+      description: 'sample quality_incentive',
+      run: sampleComponentWTEs.quality_incentive,
       executions: [
         {
-          context: jacksonContext,
+          context: sampleContext,
           expected: 33715.5,
         },
         {
           context: {
-            ...jacksonContext,
+            ...sampleContext,
             prior_year_rvu_total: 0,
           },
           expected: 0,
@@ -238,24 +238,24 @@ describe('wte complex model tests', () => {
     },
 
     {
-      description: 'jackson total comp',
+      description: 'sample total comp',
       run: (context) => {
-        wtes.define_wte('clinical_base', jacksonComponentWTEs.clinical_base);
-        wtes.define_wte('academic_base', jacksonComponentWTEs.academic_base);
-        wtes.define_wte('clinical_incentive', jacksonComponentWTEs.clinical_incentive);
-        wtes.define_wte('quality_incentive', jacksonComponentWTEs.quality_incentive);
+        wtes.define('clinical_base', sampleComponentWTEs.clinical_base);
+        wtes.define('academic_base', sampleComponentWTEs.academic_base);
+        wtes.define('clinical_incentive', sampleComponentWTEs.clinical_incentive);
+        wtes.define('quality_incentive', sampleComponentWTEs.quality_incentive);
         return wtes.sum(
-          wtes.call_wte('clinical_base', context),
-          wtes.call_wte('academic_base', context),
+          wtes.call('clinical_base', context),
+          wtes.call('academic_base', context),
           wtes.context_variable(context, 'rank_recognition'),
-          wtes.call_wte('clinical_incentive', context),
-          wtes.call_wte('quality_incentive', context)
+          wtes.call('clinical_incentive', context),
+          wtes.call('quality_incentive', context)
         );
       },
 
       executions: [
         {
-          context: jacksonContext,
+          context: sampleContext,
           expected: 487228.6,
         },
       ],

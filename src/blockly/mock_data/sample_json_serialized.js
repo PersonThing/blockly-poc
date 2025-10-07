@@ -1,9 +1,9 @@
-// sample jackson comp model - using our json serializer
+// sample comp model - using our json serializer
 // TODO: make importable
 export default [
   [
     {
-      "type": "define_wte",
+      "type": "define",
       "value": {
         "name": "clinical_base",
         "output": {
@@ -31,7 +31,7 @@ export default [
       }
     },
     {
-      "type": "define_wte",
+      "type": "define",
       "value": {
         "name": "clinical_incentive",
         "output": {
@@ -144,7 +144,7 @@ export default [
       }
     },
     {
-      "type": "define_wte",
+      "type": "define",
       "value": {
         "name": "academic_base",
         "output": {
@@ -191,7 +191,7 @@ export default [
       }
     },
     {
-      "type": "define_wte",
+      "type": "define",
       "value": {
         "name": "quality_incentive",
         "output": {
@@ -253,20 +253,20 @@ export default [
       }
     },
     {
-      "type": "define_wte",
+      "type": "define",
       "value": {
         "name": "total_comp",
         "output": {
           "type": "sum",
           "values": [
             {
-              "type": "call_wte",
+              "type": "call",
               "value": {
                 "name": "clinical_base"
               }
             },
             {
-              "type": "call_wte",
+              "type": "call",
               "value": {
                 "name": "academic_base"
               }
@@ -276,13 +276,13 @@ export default [
               "value": "rank_recognition"
             },
             {
-              "type": "call_wte",
+              "type": "call",
               "value": {
                 "name": "clinical_incentive"
               }
             },
             {
-              "type": "call_wte",
+              "type": "call",
               "value": {
                 "name": "quality_incentive"
               }
@@ -292,7 +292,7 @@ export default [
       }
     },
     {
-      "type": "call_wte",
+      "type": "call",
       "value": {
         "name": "total_comp"
       }

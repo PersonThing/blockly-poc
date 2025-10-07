@@ -6,7 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import { wteNames } from './blocks/custom_wte.svelte.js';
-import SampleBlocks from './mock_data/sample_blocks.js';
+import { sampleBlocks } from './mock_data/sample_blocks.js';
 
 const storageKey = 'mainWorkspace';
 
@@ -29,15 +29,15 @@ export const load = function (workspace) {
     data = JSON.parse(data);
   }
   if (!data) {
-    data = structuredClone(SampleBlocks);
+    data = structuredClone(sampleBlocks);
   }
 
   // Don't emit events during loading.
   if (data) {
-    // set wte names from define_wte blocks at the root
+    // set wte names from define blocks at the root
     if (data.blocks && data.blocks.blocks) {
       for (const block of data.blocks.blocks) {
-        if (block.type === 'define_wte' && block.fields && block.fields.NAME) {
+        if (block.type === 'define' && block.fields && block.fields.NAME) {
           wteNames[block.id] = block.fields.NAME;
         }
       }

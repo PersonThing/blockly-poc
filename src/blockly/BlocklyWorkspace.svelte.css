@@ -74,7 +74,7 @@ pre {
   border-bottom: 1px solid #eee;
   position: relative;
 }
-#output .logEntry .logMeta {
+#output .logEntry .meta {
   background: #eee;
   border: 1px solid #ccc;
   display: none;
@@ -87,11 +87,17 @@ pre {
   z-index: 10;
   text-align: left;
 }
-#output .logEntry:hover .logMeta {
+#output .logEntry:hover .meta {
   display: block;
 }
 
-#output .logEntry label {
+#output .logEntry pre {
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+
+#output .logEntry pre.label {
   font-weight: bold;
   text-align: left;
   padding-right: 0.5rem;
@@ -100,9 +106,7 @@ pre {
   text-overflow: ellipsis;
 }
 
-#output .logEntry pre {
-  padding: 0;
-  margin: 0;
+#output .logEntry pre.value {
   flex: 1;
 }
 

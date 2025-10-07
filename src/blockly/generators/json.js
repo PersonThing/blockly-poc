@@ -105,11 +105,11 @@ jsonGenerator.segment_frame = function (block) {
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
 
-jsonGenerator.define_wte = function (block) {
+jsonGenerator.define = function (block) {
   const name = block.getFieldValue('NAME');
   const outputJson = this.fromBlock(block.getInputTargetBlock('OUTPUT'));
   const jsonOutput = {
-    type: 'define_wte',
+    type: 'define',
     value: {
       name: name,
       output: outputJson ? JSON.parse(outputJson) : null,
@@ -119,10 +119,10 @@ jsonGenerator.define_wte = function (block) {
   return `${JSON.stringify(jsonOutput, null, 2)}`;
 };
 
-jsonGenerator.call_wte = function (block) {
+jsonGenerator.call = function (block) {
   const name = block.getFieldValue('NAME');
   const jsonOutput = {
-    type: 'call_wte',
+    type: 'call',
     value: {
       name: name,
     },

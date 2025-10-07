@@ -1,4 +1,4 @@
-// this object is populated on page load from serialization.js, and updated when define_wte blocks are added or their names change
+// this object is populated on page load from serialization.js, and updated when define blocks are added or their names change
 const wteNames = $state({});
 
 const getWTEOptions = () => {
@@ -8,10 +8,10 @@ const getWTEOptions = () => {
   return Object.values(wteNames).map((name) => [name, name]);
 };
 
-const call_wte = {
+const call = {
   init: function () {
     this.jsonInit({
-      type: 'call_wte',
+      type: 'call',
       message0: 'Call %1',
       args0: [
         {
@@ -45,11 +45,11 @@ const call_wte = {
   },
 };
 
-const define_wte = {
+const define = {
   // generate an id based on timestamp
   init: function () {
     this.jsonInit({
-      type: 'define_wte',
+      type: 'define',
       message0: 'Define %1\n%2',
       args0: [
         {
@@ -75,4 +75,4 @@ const define_wte = {
   },
 };
 
-export { define_wte, call_wte, wteNames };
+export { define, call, wteNames };
