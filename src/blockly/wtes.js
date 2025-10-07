@@ -64,7 +64,7 @@ ${code}`);
   ///////////////////////////////////////////////////////
 
   number: (value) => {
-    return wtes.logAndReturn(`number:${value}`, { value }, value);
+    return wtes.logAndReturn(`number`, { value }, value);
   },
 
   context_variable: (context, variableName) => {

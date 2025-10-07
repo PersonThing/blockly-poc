@@ -108,7 +108,7 @@
     ws = Blockly.inject(blocklyContainer, {
       toolbox,
       rtl: false,
-      grid: {spacing: 20, length: 3, colour: '#ccc', snap: true},
+      grid: {spacing: 20, length: 5, colour: '#eee', snap: true},
     });
 
     // Load the initial state from storage and run the code.
