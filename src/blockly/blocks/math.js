@@ -56,14 +56,14 @@ const createMathBlock = (type, color, message, args = null) => ({
   },
 });
 
-const sum = createMathBlock('sum', 100, '+');
-const subtract = createMathBlock('subtract', 0, '−');
+const sum = createMathBlock('sum', 230, '+');
+const subtract = createMathBlock('subtract', 230, '−');
 const multiply = createMathBlock('multiply', 230, '×');
 const divide = createMathBlock('divide', 230, '÷');
-const min = createMathBlock('min', 160, 'min');
-const max = createMathBlock('max', 160, 'max');
-const average = createMathBlock('average', 160, 'average');
-const count = createMathBlock('count', 65, 'count');
+const min = createMathBlock('min', 230, 'min');
+const max = createMathBlock('max', 230, 'max');
+const average = createMathBlock('average', 230, 'average');
+const count = createMathBlock('count', 230, 'count');
 const math = createMathBlock('math', 230, '%1', [
   {
     type: 'field_dropdown',

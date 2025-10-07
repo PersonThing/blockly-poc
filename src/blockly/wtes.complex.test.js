@@ -220,6 +220,24 @@ describe('wte complex model tests', () => {
     },
 
     {
+      description: 'jackson quality_incentive',
+      run: jacksonComponentWTEs.quality_incentive,
+      executions: [
+        {
+          context: jacksonContext,
+          expected: 33715.5,
+        },
+        {
+          context: {
+            ...jacksonContext,
+            prior_year_rvu_total: 0,
+          },
+          expected: 0,
+        },
+      ],
+    },
+
+    {
       description: 'jackson total comp',
       run: (context) => {
         wtes.define_wte('clinical_base', jacksonComponentWTEs.clinical_base);

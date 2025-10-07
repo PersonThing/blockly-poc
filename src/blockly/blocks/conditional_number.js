@@ -4,7 +4,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'conditional_number',
-      message0: 'if\n%1\n%2\n%3\nthen %4\nelse %5',
+      message0: 'if %1 %2 %3\nthen %4\nelse %5',
       args0: [
         {
           type: 'input_value',

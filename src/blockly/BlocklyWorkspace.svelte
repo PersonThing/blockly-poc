@@ -30,6 +30,8 @@
       <h2>Output</h2>
 
       <div class="blockTypeFilters" style="display: {showBlockTypeFilters ? 'block' : 'none'}">
+        <button onclick={() => (selectedBlockTypes = [...blockTypes])}>Check all</button>
+        <button onclick={() => (selectedBlockTypes = [])}>Uncheck all</button>
         {#each blockTypes as blockType}
           <label>
             <input type="checkbox" bind:group={selectedBlockTypes} value={blockType} />
@@ -106,6 +108,7 @@
     ws = Blockly.inject(blocklyContainer, {
       toolbox,
       rtl: false,
+      grid: {spacing: 20, length: 3, colour: '#ccc', snap: true},
     });
 
     // Load the initial state from storage and run the code.

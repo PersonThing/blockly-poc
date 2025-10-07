@@ -4,7 +4,7 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'number',
-      message0: '%1',
+      message0: '# %1',
       args0: [
         {
           type: 'field_number',
@@ -13,7 +13,7 @@ export default {
         },
       ],
       output: 'Number',
-      colour: 230,
+      colour: 200,
     });
   },
 };
