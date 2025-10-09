@@ -49,6 +49,11 @@ export const toolbox = {
 
         {
           kind: 'block',
+          type: 'events_filter',
+        },
+
+        {
+          kind: 'block',
           type: 'number',
           fields: {
             VALUE: 123,

@@ -16,6 +16,9 @@ Blockly.Blocks['context_variable'] = context_variable;
 import events_value from './blocks/events_value.js';
 Blockly.Blocks['events_value'] = events_value;
 
+import events_filter from './blocks/events_filter.js';
+Blockly.Blocks['events_filter'] = events_filter;
+
 import { sum, subtract, multiply, divide, min, max, average, count, math } from './blocks/math.js';
 Blockly.Blocks['sum'] = sum;
 Blockly.Blocks['subtract'] = subtract;

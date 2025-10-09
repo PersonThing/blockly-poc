@@ -37,7 +37,7 @@ export default {
           date: null,
         },
       ],
-      colour: 50,
+      colour: 1000,
       tooltip: '',
       output: 'RECURRENCE',
     });

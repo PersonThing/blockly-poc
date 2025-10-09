@@ -38,7 +38,7 @@ const makeMathGenerator = (operation) => {
   };
 };
 
-math_operations.forEach((op) => javascriptGenerator.forBlock[op] = makeMathGenerator(op));
+math_operations.forEach((op) => (javascriptGenerator.forBlock[op] = makeMathGenerator(op)));
 
 javascriptGenerator.forBlock.math = function (block, generator) {
   const operation = block.getFieldValue('OPERATION');
@@ -48,7 +48,10 @@ javascriptGenerator.forBlock.math = function (block, generator) {
     const value = generator.valueToCode(block, inputName, 0) || 'null';
     values.push(value);
   }
-  return [`wtes.math('${operation}', [${values.flatMap((v) => v).join(', ')}])`, Order.FUNCTION_CALL];
+  return [
+    `wtes.math('${operation}', [${values.flatMap((v) => v).join(', ')}])`,
+    Order.FUNCTION_CALL,
+  ];
 };
 
 javascriptGenerator.forBlock.array_math = function (block, generator) {
@@ -57,10 +60,48 @@ javascriptGenerator.forBlock.array_math = function (block, generator) {
   return [`wtes.math('${operation}', ${list})`, Order.FUNCTION_CALL];
 };
 
+const getEventFiltersFromBlock = (block, generator) => {
+  const filters = [];
+  for (let i = 0; i < block.length; i++) {
+    const inputName = `filter_${i}`;
+    const filter = generator.valueToCode(block, inputName, Order.NONE) || 'null';
+    filters.push(filter);
+  }
+  return filters;
+};
+
+const escapeTypedValue = (value) => {
+  if (typeof value === 'string') {
+    return value.replace(/'/g, "\\'");
+  }
+  return value;
+};
+
 javascriptGenerator.forBlock.events_value = function (block, generator) {
   const operation = block.getFieldValue('OPERATION');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  return [`wtes.events_value('${operation}', '${eventType}')`, Order.FUNCTION_CALL];
+  const filters = getEventFiltersFromBlock(block, generator);
+  return [
+    `wtes.events_value(
+  '${operation}',
+  '${eventType}',
+  [${filters.join(', ')}]
+)`,
+    Order.FUNCTION_CALL,
+  ];
+};
+
+javascriptGenerator.forBlock.events_filter = function (block, generator) {
+  const key = block.getFieldValue('KEY');
+  const condition = block.getFieldValue('CONDITION');
+  const value = block.getFieldValue('VALUE');
+  return [`wtes.events_filter({
+      key: '${escapeTypedValue(key)}',
+      condition: '${condition}',
+      value: '${escapeTypedValue(value)}'
+    })`,
+    Order.NONE,
+  ];
 };
 
 javascriptGenerator.forBlock.conditional_number = function (block, generator) {
@@ -70,7 +111,10 @@ javascriptGenerator.forBlock.conditional_number = function (block, generator) {
 
   const trueValue = generator.valueToCode(block, 'TRUE_VALUE', Order.NONE) || '0';
   const falseValue = generator.valueToCode(block, 'FALSE_VALUE', Order.NONE) || '0';
-  return [`wtes.conditional_number(${left}, '${operator}', ${right}, ${trueValue}, ${falseValue})`, Order.CONDITIONAL];
+  return [
+    `wtes.conditional_number(${left}, '${operator}', ${right}, ${trueValue}, ${falseValue})`,
+    Order.CONDITIONAL,
+  ];
 };
 
 javascriptGenerator.forBlock.recurrence = function (block, generator) {
@@ -119,7 +163,10 @@ javascriptGenerator.forBlock.segment_frame = function (block, generator) {
   segmentId = segmentId ? segmentId : 'null';
   const segment = sample_segments[segmentId] || [];
   const output = generator.valueToCode(block, 'OUTPUT', Order.NONE) || 'null';
-  return [`wtes.segment_frame(context, ${name}, ${JSON.stringify(segment)}, (context) => ${output})`, Order.NONE];
+  return [
+    `wtes.segment_frame(context, ${name}, ${JSON.stringify(segment)}, (context) => ${output})`,
+    Order.NONE,
+  ];
 };
 
 javascriptGenerator.forBlock.ratio_condition_true = function (block, generator) {
@@ -192,7 +239,8 @@ const getTiersFromBlock = (block, generator) => {
 
 javascriptGenerator.forBlock.tier_intersection = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const returnValueProration = generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
+  const returnValueProration =
+    generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
   const minMaxProration = generator.valueToCode(block, 'MIN_MAX_PRORATION', Order.NONE) || '0';
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
   const multiplyByInput = block.getFieldValue('MULTIPLY_BY_INPUT') === 'TRUE';
@@ -214,15 +262,14 @@ javascriptGenerator.forBlock.tier_intersection = function (block, generator) {
 
 javascriptGenerator.forBlock.tier_overlap_multiply = function (block, generator) {
   const input = generator.valueToCode(block, 'INPUT', Order.NONE) || '0';
-  const returnValueProration = generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
+  const returnValueProration =
+    generator.valueToCode(block, 'RETURN_VALUE_PRORATION', Order.NONE) || '0';
   const minMaxProration = generator.valueToCode(block, 'MIN_MAX_PRORATION', Order.NONE) || '0';
   const tiers = getTiersFromBlock(block, generator);
   return [
     `wtes.tier_overlap_multiply({
   input: ${input},
-  tiers: [
-    ${tiers.join(',\n    ')}
-  ],
+  tiers: [${tiers.join(',\n    ')}],
   return_value_proration: ${returnValueProration},
   min_max_proration: ${minMaxProration}
 })`,
@@ -234,11 +281,10 @@ javascriptGenerator.forBlock.tier = function (block, generator) {
   const min = Number(block.getFieldValue('MIN'));
   const max = Number(block.getFieldValue('MAX'));
   const value = generator.valueToCode(block, 'VALUE', Order.NONE) || 'null';
-  return [
-    `wtes.tier({
-      "min": ${isNaN(min) ? null : min},
-      "max": ${isNaN(max) ? null : max},
-      "value": ${value}
+  return [`wtes.tier({
+      min: ${isNaN(min) ? null : min},
+      max: ${isNaN(max) ? null : max},
+      value: ${value}
     })`,
     Order.NONE,
   ];

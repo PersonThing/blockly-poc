@@ -65,6 +65,7 @@ const define = {
       ],
       colour: 300,
       tooltip: '',
+      inputsInline: true,
     });
   },
 

@@ -3,6 +3,7 @@ import SampleSegments from './mock_data/sample_segments.js';
 
 // helpers several wtes use
 function isConditionMet(left, operator, right) {
+  console.log('isConditionMet', { left, operator, right });
   switch (operator.toLowerCase()) {
     case 'equals':
       return left === right;
@@ -17,7 +18,7 @@ function isConditionMet(left, operator, right) {
     case 'less_than_or_equals':
       return left <= right;
     default:
-      console.error(`Unknown condition type: ${operator}`);
+      console.error(`Unknown condition operator: ${operator}`);
       return false;
   }
 }
@@ -149,9 +150,15 @@ ${code}`);
     const anchorDate = new Date(recurrence.anchor);
     let currentDate = new Date(anchorDate);
 
+    // assert endDate after startDate
+    if (endDate < startDate) {
+      console.error('recurrence_frame endDate is before startDate');
+      return [];
+    }
+
     // TODO: respect offset
 
-    while (currentDate < endDate) {
+    while (currentDate <= endDate) {
       // if currentDate is within startDate and endDate, add a frame
       if (currentDate >= startDate && currentDate <= endDate) {
         frames.push({
@@ -161,17 +168,17 @@ ${code}`);
       }
 
       // increment currentDate by recurrence.frequency and recurrence.interval
-      switch (recurrence.frequency) {
-        case 'DAY':
+      switch (recurrence.frequency.toLowerCase()) {
+        case 'day':
           currentDate.setDate(currentDate.getDate() + (recurrence.interval || 1));
           break;
-        case 'WEEK':
+        case 'week':
           currentDate.setDate(currentDate.getDate() + 7 * (recurrence.interval || 1));
           break;
-        case 'HALF_MONTH':
+        case 'half_month':
           currentDate.setDate(currentDate.getDate() + 15 * (recurrence.interval || 1));
           break;
-        case 'MONTH':
+        case 'month':
           currentDate.setMonth(currentDate.getMonth() + (recurrence.interval || 1));
           break;
       }
@@ -179,7 +186,19 @@ ${code}`);
 
     return frames.map((frame, i) => {
       const date = new Date(frame.start).toISOString().split('T')[0];
-      return wtes.logAndReturn(`recurrence_frame`, { date }, outputCallback(context));
+      return wtes.logAndReturn(
+        `recurrence_frame`,
+        { date },
+        outputCallback({
+          ...context,
+
+          // todo: review how backend unfolds and executes frames
+          // for now just adding a few variables so tests can confirm that each execution has potentially unique values
+          frame_start: frame.start,
+          frame_end: frame.end,
+          frame_index: i,
+        })
+      );
     });
   },
 
@@ -344,7 +363,7 @@ ${code}`);
     if (typeof wtes[operation] === 'function') {
       result = wtes[operation](...values);
     } else {
-      console.error(`Unknown math type: ${operation}`);
+      console.error(`Unknown operation: ${operation}`);
     }
     return result;
   },
@@ -398,8 +417,24 @@ ${code}`);
     );
   },
 
-  events_value: (operation, eventType) => {
-    const events = SampleEvents.filter((e) => e.type === eventType);
+  events_filter: (params) => {
+    const { key, condition, value } = params;
+    const filter = { key, condition, value };
+    return wtes.logAndReturn(`events_filter:${key}:${condition}:${value}`, params, filter);
+  },
+
+  events_value: (operation, eventType, filters = []) => {
+    // get all events of the given type
+    // TODO: this should filter by participant / context also, I assume
+    let events = SampleEvents.filter((e) => e.type === eventType);
+    console.log('events', events);
+
+    // apply filters
+    filters.forEach((filter) => {
+      const { key, condition, value } = filter;
+      events = events.filter((e) => isConditionMet(e[key], condition, value));
+    });
+
     let result = null;
     switch (operation.toLowerCase()) {
       // assume events are ordered oldest to newest

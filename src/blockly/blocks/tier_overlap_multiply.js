@@ -38,7 +38,11 @@ export default {
   init: function () {
     this.jsonInit({
       type: 'tier_overlap_multiply',
-      message0: `Tier Overlap Multiply\nInput %1\nReturn Value Proration %2\nMin/Max Proration %3`,
+      message0: `Tier Overlap Multiply
+Input %1
+Return Value Proration %2
+Min/Max Proration %3
+`,
       args0: [
         {
           type: 'input_value',
@@ -64,9 +68,9 @@ export default {
 
     // add a button to add tiers
     this.appendDummyInput('tiers')
-      .appendField('Tiers')
+      .appendField('\n')
       .appendField(
-        new FieldTextButton('+', () => {
+        new FieldTextButton('+ Add tier', () => {
           this.addInput();
         })
       );

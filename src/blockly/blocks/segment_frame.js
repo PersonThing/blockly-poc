@@ -25,7 +25,7 @@ export default {
           check: 'Number',
         },
       ],
-      colour: 25,
+      colour: 100,
       tooltip: '',
       // previousStatement: null,
       // nextStatement: null,

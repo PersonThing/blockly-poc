@@ -290,4 +290,81 @@ describe('wte tests', () => {
     result = wtes.events_value('OLDEST', 'PatientSatisfaction');
     expect(result).toBe(4.2);
   });
+
+  it('should apply events_value filters correctly', () => {
+    const filter1 = { key: 'participant_id', value: 'doctor_001', condition: 'equals' }
+    const filter2 = { key: 'characterization', value: 'Good', condition: 'equals' }
+    let result = wtes.events_value('sum', 'PatientSatisfaction', [filter1, filter2]);
+    expect(result).toBe(3.8);
+
+    result = wtes.events_value('sum', 'PatientSatisfaction', [filter1]);
+    expect(result).toBe(12.5);
+  });
+
+  it('should get correct # of frames from recurrence_frame', () => {
+    // recurrence - daily for 10 days
+    const recurrence = {
+      window_start: new Date('2023-01-01'),
+      window_end: new Date('2023-01-10'),
+      frequency: 'day',
+      interval: 1,
+      anchor: new Date('2023-01-01'),
+    };
+
+    // sample offset - not used yet
+    const offset = {};
+
+    // sample context
+    const context = {
+      val1: 10,
+      val2: 20,
+    };
+
+    // output func - sum of val1 and val2 from context
+    const outputFunc = (ctx) =>
+      wtes.sum(
+        wtes.context_variable(ctx, 'val1'),
+        wtes.context_variable(ctx, 'val2'),
+        wtes.context_variable(ctx, 'frame_index')
+      );
+
+    // run the frame, should get 10 results, all with value 30 + their index
+    const result = wtes.recurrence_frame(context, recurrence, offset, outputFunc);
+    expect(result.length).toBe(10);
+    result.forEach((val, i) => expect(val).toBe(30 + i));
+  });
+
+  it('should return empty array for recurrence_frame with endDate before startDate', () => {
+    const recurrence = {
+      window_start: new Date('2023-01-10'),
+      window_end: new Date('2023-01-01'), // end before start
+      frequency: 'day',
+      interval: 1,
+      anchor: new Date('2023-01-01'),
+    };
+
+    const context = {};
+    const outputFunc = (ctx) => 1;
+    const result = wtes.recurrence_frame(context, recurrence, {}, outputFunc);
+    expect(result).toEqual([]); // should be empty array
+  });
+
+  it('recurrent_frame frequencies all work correctly', () => {
+    const frequencies = ['day', 'week', 'half_month', 'month'];
+    const expectedCounts = [10, 2, 1, 1]; // for the given date range
+
+    frequencies.forEach((freq, idx) => {
+      const recurrence = {
+        window_start: new Date('2023-01-01'),
+        window_end: new Date('2023-01-10'),
+        frequency: freq,
+        interval: 1,
+        anchor: new Date('2023-01-01'),
+      };
+      const context = {};
+      const outputFunc = (ctx) => 1;
+      const result = wtes.recurrence_frame(context, recurrence, {}, outputFunc);
+      expect(result.length).toBe(expectedCounts[idx]);
+    });
+  });
 });

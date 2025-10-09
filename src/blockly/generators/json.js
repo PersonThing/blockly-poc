@@ -140,7 +140,7 @@ const makeMathGenerator = (operation) => {
     return `{"type":"${operation}", "values":[${values.join(',')}]}`;
   };
 };
-math_operations.forEach((op) => jsonGenerator[op] = makeMathGenerator(op));
+math_operations.forEach((op) => (jsonGenerator[op] = makeMathGenerator(op)));
 
 jsonGenerator.math = function (block) {
   const operation = block.getFieldValue('OPERATION');
@@ -161,8 +161,15 @@ jsonGenerator.array_math = function (block) {
 jsonGenerator.events_value = function (block) {
   const operation = block.getFieldValue('OPERATION');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  // TODO: filters
-  return `{"type":"events_value", "operation":"${operation}", "event_type":"${eventType}"}`;
+  const filters = this.getEventFiltersFromBlock(block);
+  return `{"type":"events_value", "operation":"${operation}", "event_type":"${eventType}", "filters":[${filters.join(',')}]}`;
+};
+
+jsonGenerator.events_filter = function (block) {
+  const key = block.getFieldValue('KEY');
+  const condition = block.getFieldValue('CONDITION');
+  const value = block.getFieldValue('VALUE');
+  return `{"type":"events_filter", "key":"${key}", "condition":"${condition}", "value":"${value}"}`;
 };
 
 jsonGenerator.ratio_condition_true = function (block) {
@@ -203,6 +210,17 @@ jsonGenerator.getTiersFromBlock = function (block) {
   return tiers;
 };
 
+jsonGenerator.getEventFiltersFromBlock = function (block) {
+  const filters = [];
+  for (let i = 0; i < block.length; i++) {
+    const filterBlock = block.getInputTargetBlock(`filter_${i}`);
+    if (filterBlock) {
+      filters.push(this.fromBlock(filterBlock));
+    }
+  }
+  return filters;
+};
+
 jsonGenerator.tier_intersection = function (block) {
   const input = this.fromBlock(block.getInputTargetBlock('INPUT'));
   const returnValueProration = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE_PRORATION'));
@@ -210,7 +228,9 @@ jsonGenerator.tier_intersection = function (block) {
   const minInclusive = block.getFieldValue('MIN_INCLUSIVE') === 'TRUE';
   const multiplyByInput = block.getFieldValue('MULTIPLY_BY_INPUT') === 'TRUE';
   const tiers = this.getTiersFromBlock(block);
-  return `{"type":"tier_intersection", "input":${input}, "tiers":[${tiers.join(',')}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}, "multiply_by_input":${multiplyByInput}}`;
+  return `{"type":"tier_intersection", "input":${input}, "tiers":[${tiers.join(
+    ','
+  )}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}, "min_inclusive":${minInclusive}, "multiply_by_input":${multiplyByInput}}`;
 };
 
 jsonGenerator.tier_overlap_multiply = function (block) {
@@ -218,14 +238,18 @@ jsonGenerator.tier_overlap_multiply = function (block) {
   const returnValueProration = this.fromBlock(block.getInputTargetBlock('RETURN_VALUE_PRORATION'));
   const minMaxProration = this.fromBlock(block.getInputTargetBlock('MIN_MAX_PRORATION'));
   const tiers = this.getTiersFromBlock(block);
-  return `{"type":"tier_overlap_multiply", "input":${input}, "tiers":[${tiers.join(',')}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}}`;
+  return `{"type":"tier_overlap_multiply", "input":${input}, "tiers":[${tiers.join(
+    ','
+  )}], "return_value_proration":${returnValueProration}, "min_max_proration":${minMaxProration}}`;
 };
 
 jsonGenerator.tier = function (block) {
   const min = Number(block.getFieldValue('MIN'));
   const max = Number(block.getFieldValue('MAX'));
   const value = this.fromBlock(block.getInputTargetBlock('VALUE'));
-  return `{"type":"tier", "min":${isNaN(min) ? null : min}, "max":${isNaN(max) ? null : max}, "value":${value}}`;
-}
+  return `{"type":"tier", "min":${isNaN(min) ? null : min}, "max":${
+    isNaN(max) ? null : max
+  }, "value":${value}}`;
+};
 
 export default jsonGenerator;

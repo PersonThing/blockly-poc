@@ -65,9 +65,9 @@ Multiply tier value by input %5`,
 
     // add a button to add tiers
     this.appendDummyInput('tiers')
-      .appendField('Tiers')
+      .appendField('')
       .appendField(
-        new FieldTextButton('+', () => {
+        new FieldTextButton('+ Add tier', () => {
           this.addInput();
         })
       );

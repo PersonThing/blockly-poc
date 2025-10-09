@@ -41,12 +41,12 @@ pre {
 #input,
 #output {
   padding: 5px;
+  overflow: auto;
 }
 
 #input {
   height: 30%;
   background: #eee;
-  overflow: auto;
 }
 
 #input .inputItem {

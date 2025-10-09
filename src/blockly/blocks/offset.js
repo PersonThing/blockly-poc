@@ -37,7 +37,7 @@ export default {
           name: 'DURATION_AMOUNT',
         },
       ],
-      colour: 30,
+      colour: 1000,
       tooltip: '',
       output: 'OFFSET',
     });

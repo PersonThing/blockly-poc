@@ -40,15 +40,17 @@
         {/each}
       </div>
 
-      {#each filteredOutputLogs as log}
-        <div class="logEntry">
-          <pre class="label">{log.label}</pre>
-          {#if log.meta}
-          <pre class="meta">{JSON.stringify(log.meta, null, 2)}</pre>
-          {/if}
-          <pre class="value">{JSON.stringify(log.result, null, 2)}</pre>
-        </div>
-      {/each}
+      <div class="logs">
+        {#each filteredOutputLogs as log}
+          <div class="logEntry">
+            <pre class="label">{log.label}</pre>
+            {#if log.meta}
+              <pre class="meta">{JSON.stringify(log.meta, null, 2)}</pre>
+            {/if}
+            <pre class="value">{JSON.stringify(log.result, null, 2)}</pre>
+          </div>
+        {/each}
+      </div>
     </div>
   </div>
 </div>
@@ -108,7 +110,7 @@
     ws = Blockly.inject(blocklyContainer, {
       toolbox,
       rtl: false,
-      grid: {spacing: 20, length: 5, colour: '#eee', snap: true},
+      grid: { spacing: 20, length: 5, colour: '#eee', snap: true },
     });
 
     // Load the initial state from storage and run the code.

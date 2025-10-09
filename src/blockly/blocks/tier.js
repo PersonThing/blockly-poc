@@ -26,7 +26,7 @@ export default {
           check: 'Number',
         }
       ],
-      colour: 230,
+      colour: 1000,
       tooltip: '',
       output: 'Tier',
     });
