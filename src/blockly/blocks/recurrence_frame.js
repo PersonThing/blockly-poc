@@ -24,7 +24,7 @@ export default {
       tooltip: '',
       // previousStatement: null,
       // nextStatement: null,
-      output: 'Number',
+      output: 'Array',
     });
   },
 };

@@ -44,6 +44,11 @@ export const toolbox = {
 
         {
           kind: 'block',
+          type: 'events_value',
+        },
+
+        {
+          kind: 'block',
           type: 'number',
           fields: {
             VALUE: 123,
@@ -123,7 +128,7 @@ export const toolbox = {
         ...math_operations.map((op) => ({
           kind: 'block',
           type: op,
-        }))
+        })),
       ],
     },
 
@@ -171,22 +176,6 @@ export const toolbox = {
         {
           kind: 'block',
           type: 'tier',
-        },
-      ],
-    },
-
-    {
-      kind: 'category',
-      name: 'Events',
-      categorystyle: 'text_category',
-      contents: [
-        {
-          kind: 'block',
-          type: 'events_math',
-        },
-        {
-          kind: 'block',
-          type: 'most_recent_events',
         },
       ],
     },

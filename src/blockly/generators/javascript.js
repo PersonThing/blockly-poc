@@ -41,32 +41,26 @@ const makeMathGenerator = (operation) => {
 math_operations.forEach((op) => javascriptGenerator.forBlock[op] = makeMathGenerator(op));
 
 javascriptGenerator.forBlock.math = function (block, generator) {
-  const mathType = block.getFieldValue('MATH_TYPE');
+  const operation = block.getFieldValue('OPERATION');
   const values = [];
   for (let i = 0; i < block.length; i++) {
     const inputName = `value_${i}`;
     const value = generator.valueToCode(block, inputName, 0) || 'null';
     values.push(value);
   }
-  return [`wtes.math('${mathType}', [${values.flatMap((v) => v).join(', ')}])`, Order.FUNCTION_CALL];
+  return [`wtes.math('${operation}', [${values.flatMap((v) => v).join(', ')}])`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock.array_math = function (block, generator) {
-  const mathType = block.getFieldValue('MATH_TYPE');
+  const operation = block.getFieldValue('OPERATION');
   const list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
-  return [`wtes.math('${mathType}', ${list})`, Order.FUNCTION_CALL];
+  return [`wtes.math('${operation}', ${list})`, Order.FUNCTION_CALL];
 };
 
-javascriptGenerator.forBlock.events_math = function (block, generator) {
-  const mathType = block.getFieldValue('MATH_TYPE');
+javascriptGenerator.forBlock.events_value = function (block, generator) {
+  const operation = block.getFieldValue('OPERATION');
   const eventType = block.getFieldValue('EVENT_TYPE');
-  return [`wtes.events_math('${mathType}', '${eventType}')`, Order.FUNCTION_CALL];
-};
-
-javascriptGenerator.forBlock.most_recent_events = function (block, generator) {
-  const age = block.getFieldValue('AGE');
-  const eventType = block.getFieldValue('EVENT_TYPE');
-  return [`wtes.most_recent_events('${age}', '${eventType}')`, Order.FUNCTION_CALL];
+  return [`wtes.events_value('${operation}', '${eventType}')`, Order.FUNCTION_CALL];
 };
 
 javascriptGenerator.forBlock.conditional_number = function (block, generator) {

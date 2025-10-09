@@ -1,23 +1,22 @@
 import { describe, it, expect } from 'vitest';
 import wtes from './wtes.js';
-import SampleEvents from './mock_data/sample_events.js';
 
 describe('wte tests', () => {
   const mathTests = [
-    { mathType: 'COUNT', list: [1, 2, 3], expected: 3 },
-    { mathType: 'MAX', list: [1, 2, 3], expected: 3 },
-    { mathType: 'MIN', list: [1, 2, 3], expected: 1 },
-    { mathType: 'AVERAGE', list: [1, 2, 3], expected: 2 },
-    { mathType: 'SUM', list: [1, 2, 3], expected: 6 },
-    { mathType: 'MULTIPLY', list: [1, 2, 3], expected: 6 },
-    { mathType: 'SUM', list: [], expected: null }, // edge case
-    { mathType: 'MULTIPLY', list: [], expected: null }, // edge case
-    { mathType: 'UNKNOWN', list: [1, 2, 3], expected: null }, // edge case
+    { operation: 'COUNT', list: [1, 2, 3], expected: 3 },
+    { operation: 'MAX', list: [1, 2, 3], expected: 3 },
+    { operation: 'MIN', list: [1, 2, 3], expected: 1 },
+    { operation: 'AVERAGE', list: [1, 2, 3], expected: 2 },
+    { operation: 'SUM', list: [1, 2, 3], expected: 6 },
+    { operation: 'MULTIPLY', list: [1, 2, 3], expected: 6 },
+    { operation: 'SUM', list: [], expected: null }, // edge case
+    { operation: 'MULTIPLY', list: [], expected: null }, // edge case
+    { operation: 'UNKNOWN', list: [1, 2, 3], expected: null }, // edge case
   ];
 
-  mathTests.forEach(({ mathType, list, expected }) => {
-    it(`math ${mathType} of [${list}] should be ${expected}`, () => {
-      const result = wtes.math(mathType, list);
+  mathTests.forEach(({ operation, list, expected }) => {
+    it(`math ${operation} of [${list}] should be ${expected}`, () => {
+      const result = wtes.math(operation, list);
       expect(result).toBe(expected);
     });
   });
@@ -255,41 +254,40 @@ describe('wte tests', () => {
     expect(result).toBe(2150);
   });
 
-  it('should calculate events_math correctly', () => {
-    let result = wtes.events_math('SUM', 'PatientSatisfaction');
+  it('should calculate events_value correctly', () => {
+    let result = wtes.events_value('SUM', 'PatientSatisfaction');
     expect(result).toBe(15.6);
 
-    result = wtes.events_math('MAX', 'PatientSatisfaction');
+    result = wtes.events_value('MAX', 'PatientSatisfaction');
     expect(result).toBe(4.5);
 
-    result = wtes.events_math('COUNT', 'PatientSatisfaction');
+    result = wtes.events_value('COUNT', 'PatientSatisfaction');
     expect(result).toBe(4);
 
-    result = wtes.events_math('SUM', 'wRVU');
+    result = wtes.events_value('SUM', 'wRVU');
     expect(result).toBe(5.7);
 
-    result = wtes.events_math('MAX', 'wRVU');
+    result = wtes.events_value('MAX', 'wRVU');
     expect(result).toBe(3.2);
 
-    result = wtes.events_math('COUNT', 'wRVU');
+    result = wtes.events_value('COUNT', 'wRVU');
     expect(result).toBe(2);
 
     // events that don't exist
-    result = wtes.events_math('SUM', 'NonExistentEvent');
+    result = wtes.events_value('SUM', 'NonExistentEvent');
     expect(result).toBe(null);
 
-    result = wtes.events_math('MAX', 'NonExistentEvent');
+    result = wtes.events_value('MAX', 'NonExistentEvent');
     expect(result).toBe(null);
 
-    result = wtes.events_math('COUNT', 'NonExistentEvent');
+    result = wtes.events_value('COUNT', 'NonExistentEvent');
     expect(result).toBe(0);
-  });
 
-  it('should calculate most_recent_events correctly', () => {
-    const resultMostRecent = wtes.most_recent_events('MOST RECENT', 'PatientSatisfaction');
-    expect(resultMostRecent).toBe(3.1);
+    // most recent / oldest
+    result = wtes.events_value('MOST RECENT', 'PatientSatisfaction');
+    expect(result).toBe(3.1);
 
-    const resultOldest = wtes.most_recent_events('OLDEST', 'PatientSatisfaction');
-    expect(resultOldest).toBe(4.2);
+    result = wtes.events_value('OLDEST', 'PatientSatisfaction');
+    expect(result).toBe(4.2);
   });
 });

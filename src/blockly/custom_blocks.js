@@ -13,11 +13,8 @@ Blockly.Blocks['conditional_number'] = conditional_number;
 import context_variable from './blocks/context_variable.svelte.js';
 Blockly.Blocks['context_variable'] = context_variable;
 
-import events_math from './blocks/events_math.js';
-Blockly.Blocks['events_math'] = events_math;
-
-import most_recent_events from './blocks/most_recent_events.js';
-Blockly.Blocks['most_recent_events'] = most_recent_events;
+import events_value from './blocks/events_value.js';
+Blockly.Blocks['events_value'] = events_value;
 
 import { sum, subtract, multiply, divide, min, max, average, count, math } from './blocks/math.js';
 Blockly.Blocks['sum'] = sum;

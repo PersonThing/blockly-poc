@@ -55,10 +55,11 @@ ${code}`);
   logs: [],
   logIndentLevel: 0,
   logAndReturn: (label, meta, result) => {
-    wtes.logs.push({ 
-      label: `${'  '.repeat(wtes.logIndentLevel)}${label}`, 
-        meta, 
-        result });
+    wtes.logs.push({
+      label: `${'  '.repeat(wtes.logIndentLevel)}${label}`,
+      meta,
+      result,
+    });
     return result;
   },
 
@@ -91,7 +92,7 @@ ${code}`);
     const wteFunc = wtes.wteDefinitions[name];
     if (wteFunc) {
       const context = { ...contextOverrides };
-      
+
       // result is cached for reuse when same context is used
       const cacheKey = JSON.stringify({ name, context });
       if (!wtes.wteCache.hasOwnProperty(cacheKey)) {
@@ -107,7 +108,7 @@ ${code}`);
   },
 
   conditional_number: (left, operator, right, trueValue, falseValue) => {
-    const condition = isConditionMet(left, operator, right)
+    const condition = isConditionMet(left, operator, right);
     const result = condition ? trueValue : falseValue;
     return wtes.logAndReturn(
       `conditional_number:${condition}`,
@@ -337,8 +338,8 @@ ${code}`);
     return wtes.logAndReturn(`tier:${min}-${max}`, params, tier);
   },
 
-  _do_math: (mathType, values) => {
-    let operation = mathType?.toLowerCase();
+  _do_math: (operation, values) => {
+    operation = operation?.toLowerCase();
     let result = null;
     if (typeof wtes[operation] === 'function') {
       result = wtes[operation](...values);
@@ -388,30 +389,41 @@ ${code}`);
     return wtes.logAndReturn(`count`, { values: JSON.stringify(values) }, result);
   },
 
-  math: (mathType, values) => {
-    const result = wtes._do_math(mathType, values);
-    return wtes.logAndReturn(`math:${mathType}`, { mathType, values: JSON.stringify(values) }, result);
-  },
-
-  events_math: (mathType, eventType) => {
-    const events = SampleEvents.filter((e) => e.type === eventType);
-    const result = wtes._do_math(
-      mathType,
-      events.map((e) => e.value)
-    );
+  math: (operation, values) => {
+    const result = wtes._do_math(operation, values);
     return wtes.logAndReturn(
-      `events_math:${mathType}:${eventType}`,
-      { mathType, eventType, events },
+      `math:${operation}`,
+      { operation, values: JSON.stringify(values) },
       result
     );
   },
 
-  most_recent_events: (age, eventType) => {
-    const events = SampleEvents.filter((e) => e.type === eventType).map((e) => e.value);
-    // assume events are ordered oldest to newest
-    const result =
-      age.toLowerCase() === 'most recent' ? events.slice(-1)[0] : events.slice(0, 1)[0];
-    return wtes.logAndReturn(`most_recent_event:${eventType}:${age}`, { age, eventType }, result);
+  events_value: (operation, eventType) => {
+    const events = SampleEvents.filter((e) => e.type === eventType);
+    let result = null;
+    switch (operation.toLowerCase()) {
+      // assume events are ordered oldest to newest
+      case 'most recent':
+        result = events.slice(-1)[0]?.value;
+        break;
+
+      case 'oldest':
+        result = events.slice(0, 1)[0]?.value;
+        break;
+
+      // math operation otherwise
+      default:
+        result = wtes._do_math(
+          operation,
+          events.map((e) => e.value)
+        );
+        break;
+    }
+    return wtes.logAndReturn(
+      `events_value:${operation}:${eventType}`,
+      { operation, eventType, events },
+      result
+    );
   },
 };
 

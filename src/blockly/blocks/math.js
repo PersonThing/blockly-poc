@@ -67,7 +67,7 @@ const count = createMathBlock('count', 230, 'count');
 const math = createMathBlock('math', 230, '%1', [
   {
     type: 'field_dropdown',
-    name: 'MATH_TYPE',
+    name: 'OPERATION',
     options: math_operations.map((op) => [op, op]),
     value: 'sum',
   },

@@ -132,7 +132,6 @@ jsonGenerator.call = function (block) {
 
 const makeMathGenerator = (operation) => {
   return function (block) {
-    const mathType = block.getFieldValue('MATH_TYPE');
     const values = [];
     for (let i = 0; i < block.length; i++) {
       const valueBlock = block.getInputTargetBlock(`value_${i}`);
@@ -144,32 +143,26 @@ const makeMathGenerator = (operation) => {
 math_operations.forEach((op) => jsonGenerator[op] = makeMathGenerator(op));
 
 jsonGenerator.math = function (block) {
-  const mathType = block.getFieldValue('MATH_TYPE');
+  const operation = block.getFieldValue('OPERATION');
   const values = [];
   for (let i = 0; i < block.length; i++) {
     const valueBlock = block.getInputTargetBlock(`value_${i}`);
     values.push(this.fromBlock(valueBlock));
   }
-  return `{"type":"math", "math_type":"${mathType}", "values":[${values.join(',')}]}`;
+  return `{"type":"math", "operation":"${operation}", "values":[${values.join(',')}]}`;
 };
 
 jsonGenerator.array_math = function (block) {
-  const mathType = block.getFieldValue('MATH_TYPE');
+  const operation = block.getFieldValue('OPERATION');
   const list = this.fromBlock(block.getInputTargetBlock('LIST'));
-  return `{"type":"array_math", "math_type":"${mathType}", "list":${list}}`;
+  return `{"type":"array_math", "operation":"${operation}", "list":${list}}`;
 };
 
-jsonGenerator.events_math = function (block) {
-  const mathType = block.getFieldValue('MATH_TYPE');
+jsonGenerator.events_value = function (block) {
+  const operation = block.getFieldValue('OPERATION');
   const eventType = block.getFieldValue('EVENT_TYPE');
   // TODO: filters
-  return `{"type":"events_math", "math_type":"${mathType}", "event_type":"${eventType}"}`;
-};
-
-jsonGenerator.most_recent_events = function (block) {
-  const age = Number(block.getFieldValue('AGE'));
-  const eventType = block.getFieldValue('EVENT_TYPE');
-  return `{"type":"most_recent_events", "age":"${age}", "event_type":"${eventType}"}`;
+  return `{"type":"events_value", "operation":"${operation}", "event_type":"${eventType}"}`;
 };
 
 jsonGenerator.ratio_condition_true = function (block) {

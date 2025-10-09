@@ -5,7 +5,7 @@
 */
 import { DistinctEventTypes } from '../mock_data/sample_events.js';
 
-import math_operations from '../math_operations.js';
+import event_operations from '../event_operations.js';
 
 export default {
   length: 0,
@@ -17,11 +17,10 @@ export default {
 
       message0: '%1 of %2 event values\nthat match filters [...]',
       args0: [
-        // type of math to run
         {
           type: 'field_dropdown',
-          name: 'MATH_TYPE',
-          options: math_operations.map(op => [op, op]),
+          name: 'OPERATION',
+          options: event_operations.map(op => [op, op]),
           value: 'sum',
         },
 
