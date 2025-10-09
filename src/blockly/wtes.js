@@ -3,7 +3,6 @@ import SampleSegments from './mock_data/sample_segments.js';
 
 // helpers several wtes use
 function isConditionMet(left, operator, right) {
-  console.log('isConditionMet', { left, operator, right });
   switch (operator.toLowerCase()) {
     case 'equals':
       return left === right;
@@ -253,7 +252,6 @@ ${code}`);
     } = params;
     let adjustedTarget = target * target_proration;
     let achieved = isConditionMet(input, target_compare, adjustedTarget);
-    console.log('condition met', achieved);
     if (!achieved) {
       return wtes.logAndReturn(`target_achieved_excess:false`, { ...params, adjustedTarget }, 0);
     }
@@ -427,7 +425,6 @@ ${code}`);
     // get all events of the given type
     // TODO: this should filter by participant / context also, I assume
     let events = SampleEvents.filter((e) => e.type === eventType);
-    console.log('events', events);
 
     // apply filters
     filters.forEach((filter) => {
